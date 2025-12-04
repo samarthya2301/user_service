@@ -1,0 +1,25 @@
+server:
+  port: 3001
+  servlet:
+    context-path: /user
+
+spring:
+  application:
+    name: user-service
+  security:
+    user:
+      name: user # to be removed
+      password: pass # to be removed
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+  sql:
+    init:
+      platform: postgres
+  datasource:
+    url: jdbc:postgresql://localhost:5432/expense_intelligence
+    username: 'dev1'
+    password: 'dev1'
+    driverClassName: org.postgresql.Driver

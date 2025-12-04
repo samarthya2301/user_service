@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<body style="font-family: Arial, sans-serif; background-color: #f7f7f7; padding: 20px;">
+	<div style="max-width: 400px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+		<h2 style="color: #2D7FF9; text-align: center;">
+			Email Verification
+		</h2>
+		<p style="font-size: 14px; text-align: center;">
+			Here is your OTP Code
+		</p>
+		<div style="font-size: 32px; font-weight: bold; color: #333; text-align: center; margin: 20px 0;">
+			<span th:text="${otpCode}">Otp Code Placeholder</span>
+		</div>
+		<p style="font-size: 14px; color: #444; text-align: center;">
+			Please make sure you never share this code with anyone.<br><br>
+			<strong>Note:</strong> The code will expire in 5 minutes.
+		</p>
+	</div>
+</body>
+
+</html>
