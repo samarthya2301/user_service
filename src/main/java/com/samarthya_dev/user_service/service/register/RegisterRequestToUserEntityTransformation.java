@@ -16,7 +16,8 @@ public class RegisterRequestToUserEntityTransformation {
 
 		log.info("Creating User Entity from Register Request");
 
-		UserEntity userEntity = UserEntity.builder()
+		UserEntity userEntity = UserEntity
+			.builder()
 			.email(registerRequest.getEmail().toLowerCase())
 			.emailVerified(Boolean.FALSE)
 			.hashedPassword(registerRequest.getPassword())
