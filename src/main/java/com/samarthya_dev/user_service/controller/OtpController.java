@@ -59,7 +59,7 @@ public class OtpController {
 
 		OtpResponse verifyOtpResponse = otpService.otpVerify(verifyOtpRequest);
 		log.info("Request Processed for Endpont: /otp/verify");
-		log.debug(verifyOtpRequest.toString());
+		log.debug(verifyOtpResponse.toString());
 
 		return ResponseEntity
 			.status(HttpStatus.OK)
