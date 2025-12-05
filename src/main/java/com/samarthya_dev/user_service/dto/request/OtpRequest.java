@@ -6,8 +6,9 @@ import com.samarthya_dev.user_service.controller.flow_group.FlowRequestOtp;
 import com.samarthya_dev.user_service.controller.flow_group.FlowVerifyOtp;
 
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,9 +26,10 @@ public class OtpRequest {
 	@JsonProperty("email")
 	private String email;
 	
-	@Size(min = 6, max = 6, message = "OTP should be of size 6")
+	@Min(value = 100000, message = "OTP should be of size 6")
+	@Max(value = 999999, message = "OTP should be of size 6")
 	@NotNull(message = "OTP cannot be NULL.", groups = {FlowVerifyOtp.class})
 	@JsonProperty("otp_code")
-	private String otpCode;
+	private Integer otpCode;
 
 }

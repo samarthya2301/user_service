@@ -20,6 +20,6 @@ public interface OtpRepository extends JpaRepository<OtpEntity, UUID> {
 		AND otpEntity.consumed = false
 		AND otpEntity.expiresTimestamp > CURRENT_TIMESTAMP
 	""")
-	Optional<OtpEntity> findValidOtpForUser(String email, String otpCode);
+	Optional<OtpEntity> findValidOtpForUser(String email, Integer otpCode);
 
 }
