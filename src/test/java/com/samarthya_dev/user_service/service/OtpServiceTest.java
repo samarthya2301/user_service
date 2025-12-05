@@ -66,10 +66,27 @@ public class OtpServiceTest {
 	@BeforeAll
 	private static void initializeStaticData() {
 
-		OtpServiceTest.otpRequestWithEmail = OtpRequest.builder().email(OtpServiceTest.TEST_EMAIL).build();
-        OtpServiceTest.otpRequestWithEmailAndOtp = OtpRequest.builder().email(OtpServiceTest.TEST_EMAIL).otpCode(OtpServiceTest.TEST_OTP_CODE).build();
-        OtpServiceTest.userWithEmail = UserEntity.builder().email(OtpServiceTest.TEST_EMAIL).build();
-        OtpServiceTest.otpEntityWithOtpCode = OtpEntity.builder().otpCode(OtpServiceTest.TEST_OTP_CODE).build();
+		OtpServiceTest.otpRequestWithEmail = OtpRequest
+            .builder()
+            .email(OtpServiceTest.TEST_EMAIL)
+            .build();
+
+        OtpServiceTest.otpRequestWithEmailAndOtp = OtpRequest
+            .builder()
+            .email(OtpServiceTest.TEST_EMAIL)
+            .otpCode(OtpServiceTest.TEST_OTP_CODE)
+            .build();
+
+        OtpServiceTest.userWithEmail = UserEntity
+            .builder()
+            .email(OtpServiceTest.TEST_EMAIL)
+            .build();
+
+        OtpServiceTest.otpEntityWithOtpCode = OtpEntity
+            .builder()
+            .otpCode(OtpServiceTest.TEST_OTP_CODE)
+            .build();
+
         OtpServiceTest.otpEntityWithOtherDetails = OtpEntity
 			.builder()
 			.otpCode(OtpServiceTest.TEST_OTP_CODE)
