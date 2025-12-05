@@ -110,6 +110,17 @@ public class OtpServiceImpl implements OtpService {
 
 	}
 
+	private boolean verifyFetchedOtp(Optional<OtpEntity> otpEntityOptional, String email, Integer otpCode) {
+		return otpEntityOptional
+			.filter(otpEntity -> 
+				otpEntity.getUserId().getEmail().equals(email) &&
+				otpEntity.getOtpCode().equals(otpCode) &&
+				! (otpEntity.getConsumed()) &&
+				otpEntity.getExpiresTimestamp().isAfter(Instant.now())
+			)
+			.isPresent();
+	}
+
 	@Override
 	public OtpResponse otpVerify(OtpRequest verifyOtpRequest) {
 
@@ -118,7 +129,7 @@ public class OtpServiceImpl implements OtpService {
 		log.info("Validating Otp with User's E-Mail in Database");
 		Optional<OtpEntity> optionalOtpEntity = otpRepository.findValidOtpForUser(verifyOtpRequest.getEmail(), verifyOtpRequest.getOtpCode());
 
-		if (optionalOtpEntity.isPresent()) {
+		if (verifyFetchedOtp(optionalOtpEntity, verifyOtpRequest.getEmail(), verifyOtpRequest.getOtpCode())) {
 
 			log.info("Valid Otp Entity Found for User's E-Mail in Database");
 
