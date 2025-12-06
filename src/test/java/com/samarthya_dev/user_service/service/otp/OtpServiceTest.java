@@ -1,4 +1,4 @@
-package com.samarthya_dev.user_service.service;
+package com.samarthya_dev.user_service.service.otp;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -31,9 +31,6 @@ import com.samarthya_dev.user_service.entity.user.UserEntity;
 import com.samarthya_dev.user_service.entity.user.UserStatus;
 import com.samarthya_dev.user_service.repository.OtpRepository;
 import com.samarthya_dev.user_service.repository.UserRepository;
-import com.samarthya_dev.user_service.service.otp.EmailService;
-import com.samarthya_dev.user_service.service.otp.OtpServiceImpl;
-import com.samarthya_dev.user_service.service.otp.RandomOtpEntityCreator;
 
 @ExtendWith(MockitoExtension.class)
 public class OtpServiceTest {
@@ -58,13 +55,13 @@ public class OtpServiceTest {
 
     private static final String TEST_EMAIL = "abc@xyz.com";
     private static final Integer TEST_OTP_CODE = 123456;
-	private OtpRequest requestForOtpRequestFlow = null;
-	private OtpRequest requestForOtpVerifyFlow = null;
-    private UserEntity userEntity = null;
-    private OtpEntity otpEntity = null;
+	private OtpRequest requestForOtpRequestFlow;
+	private OtpRequest requestForOtpVerifyFlow;
+    private UserEntity userEntity;
+    private OtpEntity otpEntity;
 
     @BeforeEach
-	private void initializeStaticData() {
+	private void initializeData() {
 
         requestForOtpRequestFlow = OtpRequest
             .builder()
