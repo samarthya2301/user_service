@@ -14,7 +14,8 @@ import static org.mockito.Mockito.when;
 import java.time.Instant;
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -57,53 +58,71 @@ public class OtpServiceTest {
 
     private static final String TEST_EMAIL = "abc@xyz.com";
     private static final Integer TEST_OTP_CODE = 123456;
-	private static OtpRequest otpRequestWithEmail = null;
-	private static OtpRequest otpRequestWithEmailAndOtp = null;
-    private static UserEntity userWithEmail = null;
-    private static OtpEntity otpEntityWithOtpCode = null;
-    private static OtpEntity otpEntityWithOtherDetails = null;
+	private static OtpRequest requestForOtpRequestFlow = null;
+	private static OtpRequest requestForOtpVerifyFlow = null;
+    private static UserEntity userEntity = null;
+    private static OtpEntity otpEntity = null;
 
-	@BeforeAll
-	private static void initializeStaticData() {
+    @BeforeEach
+	private void initializeStaticData() {
 
-		OtpServiceTest.otpRequestWithEmail = OtpRequest
+		OtpServiceTest.requestForOtpRequestFlow = OtpRequest
             .builder()
             .email(OtpServiceTest.TEST_EMAIL)
             .build();
 
-        OtpServiceTest.otpRequestWithEmailAndOtp = OtpRequest
+        OtpServiceTest.requestForOtpVerifyFlow= OtpRequest
             .builder()
             .email(OtpServiceTest.TEST_EMAIL)
             .otpCode(OtpServiceTest.TEST_OTP_CODE)
             .build();
 
-        OtpServiceTest.userWithEmail = UserEntity
+        OtpServiceTest.userEntity = UserEntity
             .builder()
             .email(OtpServiceTest.TEST_EMAIL)
             .build();
 
-        OtpServiceTest.otpEntityWithOtpCode = OtpEntity
-            .builder()
-            .otpCode(OtpServiceTest.TEST_OTP_CODE)
-            .build();
-
-        OtpServiceTest.otpEntityWithOtherDetails = OtpEntity
+        OtpServiceTest.otpEntity = OtpEntity
 			.builder()
 			.otpCode(OtpServiceTest.TEST_OTP_CODE)
 			.consumed(Boolean.FALSE)
-			.userId(OtpServiceTest.userWithEmail)
+			.userId(OtpServiceTest.userEntity)
 			.expiresTimestamp(Instant.now().plusSeconds(300))
 			.build();
 
 	}
 
     @Test
+    @DisplayName("OTP Request Success")
+    public void testOtpRequestSuccess() {
+
+        when(userRepository.findByEmail(OtpServiceTest.TEST_EMAIL))
+            .thenReturn(Optional.of(userEntity));
+
+        when(randomOtpEntityCreator.create(userEntity))
+			.thenReturn(otpEntity);
+
+        when(templateEngine.process(eq("otp-code-on-email-template"), any(Context.class)))
+            .thenReturn("<html>OTP Email Template</html>");
+
+        doNothing().when(emailService).sendEMail(any(), any(), any());
+
+        OtpResponse response = otpService.otpRequest(OtpServiceTest.requestForOtpRequestFlow);
+
+        assertEquals("Otp Sent Successfully", response.getMessage());
+        verify(otpRepository, times(1)).save(otpEntity);
+        verify(emailService, times(1)).sendEMail(any(), any(), any());
+
+    }
+
+    @Test
+    @DisplayName("OTP Request Failure - User does not exist")
     public void testOtpRequestUserDoesNotExist() {
 
         when(userRepository.findByEmail(OtpServiceTest.TEST_EMAIL))
             .thenReturn(Optional.empty());
 
-        OtpResponse response = otpService.otpRequest(OtpServiceTest.otpRequestWithEmail);
+        OtpResponse response = otpService.otpRequest(OtpServiceTest.requestForOtpRequestFlow);
 
         assertEquals("User does not exist. Please register", response.getMessage());
         verify(otpRepository, never()).save(any());
@@ -112,35 +131,14 @@ public class OtpServiceTest {
     }
 
     @Test
-    public void testOtpRequestSuccess() {
-
-        when(userRepository.findByEmail(OtpServiceTest.TEST_EMAIL))
-            .thenReturn(Optional.of(userWithEmail));
-
-        when(randomOtpEntityCreator.create(userWithEmail))
-			.thenReturn(otpEntityWithOtpCode);
-
-        when(templateEngine.process(eq("otp-code-on-email-template"), any(Context.class)))
-            .thenReturn("<html>OTP Email Template</html>");
-
-        doNothing().when(emailService).sendEMail(any(), any(), any());
-
-        OtpResponse response = otpService.otpRequest(OtpServiceTest.otpRequestWithEmail);
-
-        assertEquals("Otp Sent Successfully", response.getMessage());
-        verify(otpRepository, times(1)).save(otpEntityWithOtpCode);
-        verify(emailService, times(1)).sendEMail(any(), any(), any());
-
-    }
-
-    @Test
+    @DisplayName("OTP Request Failure - Failure in sending E-Mail")
     public void testOtpRequestEmailSendFailure() {
 
         when(userRepository.findByEmail(OtpServiceTest.TEST_EMAIL))
-			.thenReturn(Optional.of(userWithEmail));
+			.thenReturn(Optional.of(userEntity));
 
-        when(randomOtpEntityCreator.create(userWithEmail))
-			.thenReturn(otpEntityWithOtpCode);
+        when(randomOtpEntityCreator.create(userEntity))
+			.thenReturn(otpEntity);
 
 		when(templateEngine.process(
 			eq("otp-code-on-email-template"),
@@ -148,44 +146,49 @@ public class OtpServiceTest {
 		))
 		.thenReturn("<html>template</html>");
 
-        doThrow(new RuntimeException("SES error"))
+        doThrow(new RuntimeException("SES Failure"))
 			.when(emailService).sendEMail(any(), any(), any());
 
-        OtpResponse response = otpService.otpRequest(OtpServiceTest.otpRequestWithEmail);
+        OtpResponse response = otpService.otpRequest(OtpServiceTest.requestForOtpRequestFlow);
 
         assertEquals("Cannot send Otp, an error occurred. Please Try Again", response.getMessage());
-        verify(otpRepository, times(1)).save(otpEntityWithOtpCode);
+        verify(otpRepository, times(1)).save(otpEntity);
 
     }
 
     @Test
+    @DisplayName("OTP Verify Success")
     public void testOtpVerifySuccess() {
 
         when(otpRepository.findValidOtpForUser(OtpServiceTest.TEST_EMAIL, OtpServiceTest.TEST_OTP_CODE))
-                .thenReturn(Optional.of(otpEntityWithOtherDetails));
-        when(userRepository.findByEmail(OtpServiceTest.TEST_EMAIL))
-                .thenReturn(Optional.of(userWithEmail));
+                .thenReturn(Optional.of(otpEntity));
 
-        OtpResponse response = otpService.otpVerify(otpRequestWithEmailAndOtp);
+        when(userRepository.findByEmail(OtpServiceTest.TEST_EMAIL))
+                .thenReturn(Optional.of(userEntity));
+
+        OtpResponse response = otpService.otpVerify(requestForOtpVerifyFlow);
 
         assertEquals("User's E-Mail verified successfully.", response.getMessage());
 
-        assertTrue(otpEntityWithOtherDetails.getConsumed());
-        assertTrue(userWithEmail.getEmailVerified());
-        assertEquals(UserStatus.ACTIVE, userWithEmail.getStatus());
+        assertTrue(otpEntity.getConsumed());
+        assertTrue(userEntity.getEmailVerified());
+        assertEquals(UserStatus.ACTIVE, userEntity.getStatus());
 
-        verify(otpRepository, times(1)).save(otpEntityWithOtherDetails);
-        verify(userRepository, times(1)).save(userWithEmail);
+        verify(otpRepository, times(1)).save(otpEntity);
+        verify(userRepository, times(1)).save(userEntity);
 
     }
 
     @Test
-    public void testOtpVerifyFailedExpiredOtp() {
+    @DisplayName("OTP Verify Failure - OTP is present but expired")
+    public void testOtpVerifyExpiredOtp() {
+
+        otpEntity.setExpiresTimestamp(Instant.now().minusSeconds(5L));
 
         when(otpRepository.findValidOtpForUser(OtpServiceTest.TEST_EMAIL, OtpServiceTest.TEST_OTP_CODE))
-            .thenReturn(Optional.of(otpEntityWithOtherDetails));
+            .thenReturn(Optional.of(otpEntity));
 
-        OtpResponse response = otpService.otpVerify(otpRequestWithEmailAndOtp);
+        OtpResponse response = otpService.otpVerify(requestForOtpVerifyFlow);
 
         assertEquals("User's E-Mail cannot be verified. Please request Otp again.", response.getMessage());
 
@@ -195,12 +198,31 @@ public class OtpServiceTest {
     }
 
     @Test
+    @DisplayName("OTP Verify Failure - OTP is present but already consumed")
+    public void testOtpVerifyConsumedOtp() {
+
+        otpEntity.setConsumed(Boolean.TRUE);
+
+        when(otpRepository.findValidOtpForUser(OtpServiceTest.TEST_EMAIL, OtpServiceTest.TEST_OTP_CODE))
+            .thenReturn(Optional.of(otpEntity));
+
+        OtpResponse response = otpService.otpVerify(requestForOtpVerifyFlow);
+
+        assertEquals("User's E-Mail cannot be verified. Please request Otp again.", response.getMessage());
+
+        verify(userRepository, never()).save(any());
+        verify(otpRepository, never()).save(any());
+
+    }
+
+    @Test
+    @DisplayName("OTP Verify Failure - OTP is not present because invalid")
     public void testOtpVerifyNoOtpFound() {
 
         when(otpRepository.findValidOtpForUser(OtpServiceTest.TEST_EMAIL, OtpServiceTest.TEST_OTP_CODE))
 			.thenReturn(Optional.empty());
 
-        OtpResponse response = otpService.otpVerify(otpRequestWithEmailAndOtp);
+        OtpResponse response = otpService.otpVerify(requestForOtpVerifyFlow);
 
         assertEquals("User's E-Mail cannot be verified. Please request Otp again.", response.getMessage());
 
