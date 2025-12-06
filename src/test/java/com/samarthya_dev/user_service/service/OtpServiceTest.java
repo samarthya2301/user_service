@@ -58,35 +58,35 @@ public class OtpServiceTest {
 
     private static final String TEST_EMAIL = "abc@xyz.com";
     private static final Integer TEST_OTP_CODE = 123456;
-	private static OtpRequest requestForOtpRequestFlow = null;
-	private static OtpRequest requestForOtpVerifyFlow = null;
-    private static UserEntity userEntity = null;
-    private static OtpEntity otpEntity = null;
+	private OtpRequest requestForOtpRequestFlow = null;
+	private OtpRequest requestForOtpVerifyFlow = null;
+    private UserEntity userEntity = null;
+    private OtpEntity otpEntity = null;
 
     @BeforeEach
 	private void initializeStaticData() {
 
-		OtpServiceTest.requestForOtpRequestFlow = OtpRequest
+        requestForOtpRequestFlow = OtpRequest
             .builder()
             .email(OtpServiceTest.TEST_EMAIL)
             .build();
 
-        OtpServiceTest.requestForOtpVerifyFlow= OtpRequest
+        requestForOtpVerifyFlow = OtpRequest
             .builder()
             .email(OtpServiceTest.TEST_EMAIL)
             .otpCode(OtpServiceTest.TEST_OTP_CODE)
             .build();
 
-        OtpServiceTest.userEntity = UserEntity
+        userEntity = UserEntity
             .builder()
             .email(OtpServiceTest.TEST_EMAIL)
             .build();
 
-        OtpServiceTest.otpEntity = OtpEntity
+        otpEntity = OtpEntity
 			.builder()
 			.otpCode(OtpServiceTest.TEST_OTP_CODE)
 			.consumed(Boolean.FALSE)
-			.userId(OtpServiceTest.userEntity)
+			.userId(userEntity)
 			.expiresTimestamp(Instant.now().plusSeconds(300))
 			.build();
 
@@ -107,7 +107,7 @@ public class OtpServiceTest {
 
         doNothing().when(emailService).sendEMail(any(), any(), any());
 
-        OtpResponse response = otpService.otpRequest(OtpServiceTest.requestForOtpRequestFlow);
+        OtpResponse response = otpService.otpRequest(requestForOtpRequestFlow);
 
         assertEquals("Otp Sent Successfully", response.getMessage());
         verify(otpRepository, times(1)).save(otpEntity);
@@ -122,7 +122,7 @@ public class OtpServiceTest {
         when(userRepository.findByEmail(OtpServiceTest.TEST_EMAIL))
             .thenReturn(Optional.empty());
 
-        OtpResponse response = otpService.otpRequest(OtpServiceTest.requestForOtpRequestFlow);
+        OtpResponse response = otpService.otpRequest(requestForOtpRequestFlow);
 
         assertEquals("User does not exist. Please register", response.getMessage());
         verify(otpRepository, never()).save(any());
@@ -149,7 +149,7 @@ public class OtpServiceTest {
         doThrow(new RuntimeException("SES Failure"))
 			.when(emailService).sendEMail(any(), any(), any());
 
-        OtpResponse response = otpService.otpRequest(OtpServiceTest.requestForOtpRequestFlow);
+        OtpResponse response = otpService.otpRequest(requestForOtpRequestFlow);
 
         assertEquals("Cannot send Otp, an error occurred. Please Try Again", response.getMessage());
         verify(otpRepository, times(1)).save(otpEntity);
