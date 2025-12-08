@@ -4,10 +4,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.samarthya_dev.user_service.entity.otp.OtpEntity;
+
+import jakarta.transaction.Transactional;
 
 @Repository
 public interface OtpRepository extends JpaRepository<OtpEntity, UUID> {
@@ -21,5 +24,14 @@ public interface OtpRepository extends JpaRepository<OtpEntity, UUID> {
 		AND otpEntity.expiresTimestamp > CURRENT_TIMESTAMP
 	""")
 	Optional<OtpEntity> findValidOtpForUser(String email, Integer otpCode);
+
+	@Transactional
+	@Modifying
+	@Query("""
+		DELETE FROM OtpEntity otpEntity
+		WHERE otpEntity.consumed = true
+		OR otpEntity.expiresTimestamp < CURRENT_TIMESTAMP
+	""")
+	Integer deleteConsumedOrExpiredOtps();
 
 }
