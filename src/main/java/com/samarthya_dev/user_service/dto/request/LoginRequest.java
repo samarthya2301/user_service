@@ -13,7 +13,7 @@ import lombok.ToString;
 @Data
 @Builder
 @AllArgsConstructor
-@ToString
+@ToString(exclude = {"password"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LoginRequest {
 
@@ -25,9 +25,5 @@ public class LoginRequest {
 	@NotNull(message = "Password cannot be NULL")
 	@JsonProperty("password")
 	private String password;
-
-	// @Size(min = 6, max = 6, message = "OTP should be of size 6")
-	// @NotNull(message = "OTP cannot be NULL")
-	// private String otpCode;
 	
 }
