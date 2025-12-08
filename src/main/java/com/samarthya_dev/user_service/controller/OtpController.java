@@ -34,7 +34,7 @@ public class OtpController {
 		this.otpService = otpService;
 	}
 
-	@PostMapping(path = "/otp/request")
+	@PostMapping(path = "/otp/request", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<OtpResponse> otpRequest(@RequestBody @Validated(FlowRequestOtp.class) OtpRequest sendOtpRequest) {
 
 		log.info("Request Invoked on Endpoint: /otp/request");
@@ -51,7 +51,7 @@ public class OtpController {
 
 	}
 
-	@PostMapping(path = "/otp/verify")
+	@PostMapping(path = "/otp/verify", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<OtpResponse> otpVerify(@RequestBody @Validated(FlowVerifyOtp.class) OtpRequest verifyOtpRequest) {
 
 		log.info("Request Invoked on Endpoint: /otp/verify");

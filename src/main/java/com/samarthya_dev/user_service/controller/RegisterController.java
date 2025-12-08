@@ -51,5 +51,10 @@ public class RegisterController {
 			.body(resgisterRespose);
 
 	}
+
+	public ResponseEntity<ResgisterRespose> postMethodName(@RequestBody @Valid RegisterRequest entity) {
+		// TODO: implementation for other registration types - google etc.
+		return null;
+	}
 	
 }
