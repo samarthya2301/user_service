@@ -13,7 +13,7 @@ import lombok.ToString;
 @Data
 @Builder
 @AllArgsConstructor
-@ToString
+@ToString(exclude = {"password"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class RegisterRequest {
 
