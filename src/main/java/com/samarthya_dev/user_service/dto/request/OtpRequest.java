@@ -8,6 +8,7 @@ import com.samarthya_dev.user_service.controller.flow_group.FlowVerifyOtp;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,6 +24,7 @@ public class OtpRequest {
 
 	@Email(message = "Invalid E-Mail Format")
 	@NotNull(message = "E-Mail cannot be NULL", groups = {FlowRequestOtp.class, FlowVerifyOtp.class})
+	@NotEmpty(message = "E-Mail cannot be Empty")
 	@JsonProperty("email")
 	private String email;
 	

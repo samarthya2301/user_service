@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,10 +20,12 @@ public class RegisterRequest {
 
 	@Email(message = "Invalid E-Mail Format")
 	@NotNull(message = "E-Mail cannot be NULL")
+	@NotEmpty(message = "E-Mail cannot be Empty")
 	@JsonProperty("email")
 	private String email;
 
 	@NotNull(message = "Password cannot be NULL")
+	@NotEmpty(message = "Password cannot be Empty")
 	@JsonProperty("password")
 	private String password;
 
