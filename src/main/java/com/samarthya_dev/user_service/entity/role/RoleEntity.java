@@ -1,5 +1,6 @@
 package com.samarthya_dev.user_service.entity.role;
 
+import java.time.Instant;
 import java.util.UUID;
 
 import com.samarthya_dev.user_service.entity.user.UserEntity;
@@ -33,7 +34,10 @@ public class RoleEntity {
 	@JoinColumn(name = "user_id", referencedColumnName = "id")
 	private UserEntity user;
 
-	@Column(name = "role_name")
+	@Column(name = "role_name", nullable = false)
 	private RoleName roleName;
+
+	@Column(name = "created_timestamp", nullable = false)
+	private Instant createdTimestamp;
 	
 }

@@ -17,7 +17,7 @@ public interface OtpRepository extends JpaRepository<OtpEntity, UUID> {
 	
 	@Query("""
 		SELECT otpEntity FROM OtpEntity otpEntity
-		JOIN otpEntity.userId user
+		JOIN otpEntity.user user
 		WHERE user.email = :email
 		AND otpEntity.otpCode = :otpCode
 		AND otpEntity.consumed = false
