@@ -6,10 +6,6 @@ server:
 spring:
   application:
     name: user-service
-  security:
-    user:
-      name: user # to be removed
-      password: pass # to be removed
   jpa:
     database: POSTGRESQL
     show-sql: true

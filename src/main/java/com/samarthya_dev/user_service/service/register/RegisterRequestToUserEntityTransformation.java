@@ -1,6 +1,9 @@
 package com.samarthya_dev.user_service.service.register;
 
 import java.time.Instant;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.samarthya_dev.user_service.dto.request.RegisterRequest;
@@ -12,6 +15,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class RegisterRequestToUserEntityTransformation {
+
+	@Autowired
+	private final PasswordEncoder passwordEncoder;
+
+	public RegisterRequestToUserEntityTransformation(PasswordEncoder passwordEncoder) {
+		this.passwordEncoder = passwordEncoder;
+	}
+
 	public UserEntity transform(RegisterRequest registerRequest) {
 
 		log.info("Creating User Entity from Register Request");
@@ -20,7 +31,7 @@ public class RegisterRequestToUserEntityTransformation {
 			.builder()
 			.email(registerRequest.getEmail().toLowerCase())
 			.emailVerified(Boolean.FALSE)
-			.hashedPassword(registerRequest.getPassword())
+			.hashedPassword(passwordEncoder.encode(registerRequest.getPassword()))
 			.status(UserStatus.DISABLED)
 			.createdTimestamp(Instant.now())
 			.updatedTimestamp(null)
@@ -31,4 +42,5 @@ public class RegisterRequestToUserEntityTransformation {
 		return userEntity;
 
 	}
+
 }

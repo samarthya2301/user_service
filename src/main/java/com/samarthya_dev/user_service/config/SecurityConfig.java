@@ -2,7 +2,6 @@ package com.samarthya_dev.user_service.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,9 +16,16 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 		return httpSecurity
 			.csrf(csrf -> csrf.disable())
-			.httpBasic(https -> {
-			})
-			.httpBasic(Customizer.withDefaults())
+			.authorizeHttpRequests(
+				auth -> auth
+					.requestMatchers("/register", "/otp/request", "/otp/verify")
+					.permitAll()
+					.anyRequest()
+					// TODO: to be changed to - authenticated() afterwards
+					.permitAll()
+			)
+			.httpBasic(customizer -> customizer.disable())
+			.formLogin(form -> form.disable())
 			.build();
 	}
 
