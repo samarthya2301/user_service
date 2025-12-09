@@ -113,7 +113,7 @@ public class OtpServiceImpl implements OtpService {
 	private boolean verifyFetchedOtp(Optional<OtpEntity> otpEntityOptional, String email, Integer otpCode) {
 		return otpEntityOptional
 			.filter(otpEntity -> 
-				otpEntity.getUserId().getEmail().equals(email) &&
+				otpEntity.getUser().getEmail().equals(email) &&
 				otpEntity.getOtpCode().equals(otpCode) &&
 				! (otpEntity.getConsumed()) &&
 				otpEntity.getExpiresTimestamp().isAfter(Instant.now())

@@ -19,7 +19,7 @@ public class RandomOtpEntityCreator {
 
 		OtpEntity otpEntity = OtpEntity
 			.builder()
-			.userId(userEntity)
+			.user(userEntity)
 			.otpCode(RandomUtils.secure().randomInt(100000, 1000000))
 			.createdTimestamp(Instant.now())
 			.expiresTimestamp(Instant.now().plusSeconds(300L))

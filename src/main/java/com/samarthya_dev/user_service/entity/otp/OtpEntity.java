@@ -32,7 +32,7 @@ public class OtpEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "user_id", referencedColumnName = "id")
-	private UserEntity userId;
+	private UserEntity user;
 
 	@Column(name = "otp_code", length = 6, nullable = false)
 	private Integer otpCode;

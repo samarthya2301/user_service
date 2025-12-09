@@ -83,7 +83,7 @@ public class OtpServiceTest {
 			.builder()
 			.otpCode(OtpServiceTest.TEST_OTP_CODE)
 			.consumed(Boolean.FALSE)
-			.userId(userEntity)
+			.user(userEntity)
 			.expiresTimestamp(Instant.now().plusSeconds(300))
 			.build();
 
