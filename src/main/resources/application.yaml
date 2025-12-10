@@ -2,6 +2,8 @@ server:
   port: 3001
 
 spring:
+  config:
+    import: "optional:file:.env[.properties]"
   profiles:
     active: dev
 
@@ -9,3 +11,7 @@ logging:
   level:
     root: INFO
     '[com.samarthya_dev.user_service]': DEBUG
+
+secrets:
+  jwt:
+    key: ${SECRETS_JWT_KEY}
