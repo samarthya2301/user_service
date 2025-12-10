@@ -10,11 +10,8 @@ import com.samarthya_dev.user_service.dto.response.RegisterUserStatus;
 import com.samarthya_dev.user_service.dto.response.ResgisterRespose;
 import com.samarthya_dev.user_service.entity.auth_provider.AuthProviderEntity;
 import com.samarthya_dev.user_service.entity.auth_provider.AuthProviderType;
-import com.samarthya_dev.user_service.entity.role.RoleEntity;
-import com.samarthya_dev.user_service.entity.role.RoleName;
 import com.samarthya_dev.user_service.entity.user.UserEntity;
 import com.samarthya_dev.user_service.repository.AuthProviderRepository;
-import com.samarthya_dev.user_service.repository.RoleRepository;
 import com.samarthya_dev.user_service.repository.UserRepository;
 
 import lombok.extern.slf4j.Slf4j;
@@ -30,32 +27,22 @@ public class RegisterServiceImpl implements RegisterService {
 	private final AuthProviderRepository authProviderRepository;
 
 	@Autowired
-    private final RoleRepository roleRepository;
-
-	@Autowired
 	private final RegisterRequestToUserEntityTransformation registerRequestToUserEntityTransformation;
 
 	@Autowired
 	private final AuthProviderForUserEntityCreator authProviderForUserEntityCreator;
 
-	@Autowired
-	private final RoleForUserEntityCreator roleForUserEntityCreator;
-
 	RegisterServiceImpl(
 		UserRepository userRepository,
 		AuthProviderRepository authProviderRepository,
-		RoleRepository roleRepository,
 		RegisterRequestToUserEntityTransformation registerRequestToUserEntityTransformation,
-		AuthProviderForUserEntityCreator authProviderForUserEntityCreator,
-		RoleForUserEntityCreator roleForUserEntityCreator
+		AuthProviderForUserEntityCreator authProviderForUserEntityCreator
 	) {
 
 		this.userRepository = userRepository;
 		this.authProviderRepository = authProviderRepository;
-		this.roleRepository = roleRepository;
 		this.registerRequestToUserEntityTransformation = registerRequestToUserEntityTransformation;
 		this.authProviderForUserEntityCreator = authProviderForUserEntityCreator;
-		this.roleForUserEntityCreator = roleForUserEntityCreator;
 
 	}
 
@@ -87,11 +74,6 @@ public class RegisterServiceImpl implements RegisterService {
 			log.info("Saving Auth Provider Entity into Database");
 			authProviderRepository.save(authProviderEntity);
 			log.info("Auth Provider Entity saved successfully into Database");
-
-			RoleEntity roleEntity = roleForUserEntityCreator.create(userEntity, RoleName.USER);
-			log.info("Saving Role Entity into Database");
-			roleRepository.save(roleEntity);
-			log.info("Role Entity saved successfully into Database");
 
 			return ResgisterRespose
 				.builder()

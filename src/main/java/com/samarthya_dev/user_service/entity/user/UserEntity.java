@@ -1,6 +1,7 @@
 package com.samarthya_dev.user_service.entity.user;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 import jakarta.persistence.Column;
@@ -34,6 +35,9 @@ public class UserEntity {
 
 	@Column(name = "hashed_password", nullable = false)
 	private String hashedPassword;
+
+	@Column(name = "role", nullable = false)
+	private List<UserRole> role;
 
 	@Column(name = "status", nullable = false)
 	private UserStatus status;
