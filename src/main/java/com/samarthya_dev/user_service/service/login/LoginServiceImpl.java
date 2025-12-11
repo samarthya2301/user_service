@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.samarthya_dev.user_service.dto.request.LoginRequest;
@@ -11,6 +12,8 @@ import com.samarthya_dev.user_service.dto.response.LoginResponse;
 import com.samarthya_dev.user_service.entity.user.UserEntity;
 import com.samarthya_dev.user_service.entity.user.UserStatus;
 import com.samarthya_dev.user_service.repository.UserRepository;
+import com.samarthya_dev.user_service.service.token.JwtService;
+import com.samarthya_dev.user_service.service.token.RefreshService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,8 +24,20 @@ public class LoginServiceImpl implements LoginService {
 	@Autowired
 	private final UserRepository userRepository;
 
-	LoginServiceImpl(UserRepository userRepository) {
+	@Autowired
+	private final PasswordEncoder passwordEncoder;
+
+	@Autowired
+	private final JwtService jwtService;
+
+	@Autowired
+	private final RefreshService refreshService;
+
+	LoginServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService, RefreshService refreshService) {
 		this.userRepository = userRepository;
+		this.passwordEncoder = passwordEncoder;
+		this.jwtService = jwtService;
+		this.refreshService = refreshService;
 	}
 
 	@Override
@@ -44,7 +59,7 @@ public class LoginServiceImpl implements LoginService {
 				return isEmailVerifiedAtm.get();
 			})
 			.filter(userEntity -> {
-				if (userEntity.getHashedPassword() == loginRequest.getPassword()) {
+				if (passwordEncoder.matches(loginRequest.getPassword(), userEntity.getHashedPassword())) {
 					isPasswordCorrectAtm.set(Boolean.TRUE);
 				}
 				return isPasswordCorrectAtm.get();
@@ -80,8 +95,22 @@ public class LoginServiceImpl implements LoginService {
 		}
 
 		log.info("Valid User with Correct Password and Verified E-Mail found in Database");
-		// TODO: generate jwt with the information
-		return null;
+
+		log.info("Generating JWT for User");
+		String jwtToken = jwtService.generateToken(userEntityOptional.get());
+		log.info("JWT Created for User");
+
+		log.info("Generating Refresh Token for User");
+		String refreshToken = refreshService.generateToken(userEntityOptional.get());
+		log.info("Refresh Token Created for User");
+
+		return LoginResponse
+			.builder()
+			.accessToken(jwtToken)
+			.refreshToken(refreshToken)
+			.tokenType("Bearer")
+			.message("User Logged In Successfully")
+			.build();
 		
 	}
 	

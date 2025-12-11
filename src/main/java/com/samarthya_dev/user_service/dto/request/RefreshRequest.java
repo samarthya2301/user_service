@@ -1,8 +1,10 @@
-package com.samarthya_dev.user_service.dto.response;
+package com.samarthya_dev.user_service.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,20 +13,13 @@ import lombok.ToString;
 @Data
 @Builder
 @AllArgsConstructor
-@ToString(exclude = {"accessToken", "refreshToken"})
+@ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class LoginResponse {
+public class RefreshRequest {
 
-	@JsonProperty("accessToken")
-	private String accessToken;
-
+	@NotNull(message = "Refresh Token cannot be Null")
+	@NotEmpty(message = "Refresh Token cannot be Empty")
 	@JsonProperty("refreshToken")
 	private String refreshToken;
-
-	@JsonProperty("tokenType")
-	private String tokenType;
-
-	@JsonProperty("message")
-	private String message;
 	
 }
