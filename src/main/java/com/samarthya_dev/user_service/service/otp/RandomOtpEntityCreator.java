@@ -20,8 +20,7 @@ public class RandomOtpEntityCreator {
 		OtpEntity otpEntity = OtpEntity
 			.builder()
 			.user(userEntity)
-			.otpCode(111111) // TODO: only for testing purposes
-			// .otpCode(RandomUtils.secure().randomInt(100000, 1000000))
+			.otpCode(RandomUtils.secure().randomInt(100000, 1000000))
 			.createdTimestamp(Instant.now())
 			.expiresTimestamp(Instant.now().plusSeconds(300L))
 			.consumed(Boolean.FALSE)
