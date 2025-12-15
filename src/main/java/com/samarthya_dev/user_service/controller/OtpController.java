@@ -2,8 +2,8 @@ package com.samarthya_dev.user_service.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import com.samarthya_dev.user_service.controller.flow_group.FlowRequestOtp;
-import com.samarthya_dev.user_service.controller.flow_group.FlowVerifyOtp;
+import com.samarthya_dev.user_service.controller.flow_group.otp.FlowRequestOtp;
+import com.samarthya_dev.user_service.controller.flow_group.otp.FlowVerifyOtp;
 import com.samarthya_dev.user_service.dto.request.OtpRequest;
 import com.samarthya_dev.user_service.dto.response.OtpResponse;
 import com.samarthya_dev.user_service.service.otp.OtpService;

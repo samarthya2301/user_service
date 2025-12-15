@@ -2,8 +2,8 @@ package com.samarthya_dev.user_service.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.samarthya_dev.user_service.controller.flow_group.FlowRequestOtp;
-import com.samarthya_dev.user_service.controller.flow_group.FlowVerifyOtp;
+import com.samarthya_dev.user_service.controller.flow_group.otp.FlowRequestOtp;
+import com.samarthya_dev.user_service.controller.flow_group.otp.FlowVerifyOtp;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
