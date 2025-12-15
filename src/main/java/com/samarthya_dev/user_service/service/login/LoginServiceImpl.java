@@ -11,6 +11,7 @@ import com.samarthya_dev.user_service.dto.request.LoginRequest;
 import com.samarthya_dev.user_service.dto.response.LoginResponse;
 import com.samarthya_dev.user_service.entity.user.UserEntity;
 import com.samarthya_dev.user_service.entity.user.UserStatus;
+import com.samarthya_dev.user_service.repository.RefreshTokenRepository;
 import com.samarthya_dev.user_service.repository.UserRepository;
 import com.samarthya_dev.user_service.service.token.JwtService;
 import com.samarthya_dev.user_service.service.token.RefreshService;
@@ -33,11 +34,21 @@ public class LoginServiceImpl implements LoginService {
 	@Autowired
 	private final RefreshService refreshService;
 
-	LoginServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService, RefreshService refreshService) {
+	@Autowired
+	private final RefreshTokenRepository refreshTokenRepository;
+
+	LoginServiceImpl(
+		UserRepository userRepository,
+		PasswordEncoder passwordEncoder,
+		JwtService jwtService,
+		RefreshService refreshService,
+		RefreshTokenRepository refreshTokenRepository
+	) {
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.jwtService = jwtService;
 		this.refreshService = refreshService;
+		this.refreshTokenRepository = refreshTokenRepository;
 	}
 
 	@Override
@@ -120,17 +131,18 @@ public class LoginServiceImpl implements LoginService {
 		log.info("Refresh Service Invoked");
 
 		log.info("Searching user by E-Mail in Database");
-		Optional<UserEntity> userEntityOptional = userRepository.findByEmail(refreshRequest.getEmail());
 
-		// TODO: based on boolean, process ahead
-		if (userEntityOptional.isPresent()) {
-		} else {
-		}
+		LoginResponse loginResponse = userRepository.findByEmail(refreshRequest.getEmail())
+    		.flatMap(userEntity -> refreshTokenRepository.findValidRefreshTokenForUser(refreshRequest.getEmail(), refreshRequest.getRefreshToken()))
+    		.map(tokenEntity -> LoginResponse.builder().message(tokenEntity.getToken()).build())
+			.orElseGet(() -> LoginResponse.builder().message("hizru").build());
+
+		return loginResponse;
 
 		// 1. validate refresh token
 		// 2. issue new jwt access if refresh valid
 		// 3. send appropriate response
-		return LoginResponse.builder().message("helloooo").build();
+		// 4. if exisiting jwt valid, return the same
 
 	}
 	
