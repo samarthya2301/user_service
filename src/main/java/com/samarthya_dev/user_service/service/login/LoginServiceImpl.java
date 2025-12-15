@@ -115,10 +115,23 @@ public class LoginServiceImpl implements LoginService {
 	}
 
 	@Override
-	public LoginResponse refresh(LoginRequest loginRequest) {
+	public LoginResponse refresh(LoginRequest refreshRequest) {
+
+		log.info("Refresh Service Invoked");
+
+		log.info("Searching user by E-Mail in Database");
+		Optional<UserEntity> userEntityOptional = userRepository.findByEmail(refreshRequest.getEmail());
+
+		// TODO: based on boolean, process ahead
+		if (userEntityOptional.isPresent()) {
+		} else {
+		}
+
 		// 1. validate refresh token
-		// 2. issue new jwt access
+		// 2. issue new jwt access if refresh valid
+		// 3. send appropriate response
 		return LoginResponse.builder().message("helloooo").build();
+
 	}
 	
 }
