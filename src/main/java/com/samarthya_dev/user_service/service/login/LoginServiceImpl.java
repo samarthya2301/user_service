@@ -96,13 +96,13 @@ public class LoginServiceImpl implements LoginService {
 
 		log.info("Valid User with Correct Password and Verified E-Mail found in Database");
 
-		log.info("Generating JWT for User");
-		String jwtToken = jwtService.generateToken(userEntityOptional.get());
-		log.info("JWT Created for User");
-
 		log.info("Generating Refresh Token for User");
 		String refreshToken = refreshService.generateToken(userEntityOptional.get());
 		log.info("Refresh Token Created for User");
+
+		log.info("Generating JWT for User");
+		String jwtToken = jwtService.generateToken(userEntityOptional.get());
+		log.info("JWT Created for User");
 
 		return LoginResponse
 			.builder()
@@ -112,6 +112,13 @@ public class LoginServiceImpl implements LoginService {
 			.message("User Logged In Successfully")
 			.build();
 		
+	}
+
+	@Override
+	public LoginResponse refresh(LoginRequest loginRequest) {
+		// 1. validate refresh token
+		// 2. issue new jwt access
+		return LoginResponse.builder().message("helloooo").build();
 	}
 	
 }
