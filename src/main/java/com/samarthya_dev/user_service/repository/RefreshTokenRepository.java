@@ -16,7 +16,7 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshTokenEntity
 		SELECT refreshToken FROM RefreshTokenEntity refreshToken
 		JOIN refreshToken.user user
 		WHERE user.email = :email
-		AND refreshToken.token = :token
+		AND refreshToken.token = :refreshToken
 		AND refreshToken.expiresTimestamp > CURRENT_TIMESTAMP
 	""")
 	Optional<RefreshTokenEntity> findValidRefreshTokenForUser(String email, String refreshToken);
