@@ -33,7 +33,6 @@ public class JwtServiceImpl implements JwtService {
 
 	@Override
 	public String generateToken(UserEntity userEntity) {
-		System.out.println(SECRETS_JWT_KEY);
 		return Jwts
 			.builder()
 			.subject(userEntity.getEmail())
