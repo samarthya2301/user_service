@@ -21,7 +21,8 @@ import lombok.ToString;
 public class LoginRequest {
 
 	@Email(message = "Invalid E-Mail Format")
-	@NotNull(message = "E-Mail cannot be NULL", groups = {FlowLogin.class})
+	@NotNull(message = "E-Mail cannot be NULL", groups = {FlowLogin.class, FlowRefresh.class})
+	@NotEmpty(message = "E-Mail cannot be Empty")
 	@JsonProperty("email")
 	private String email;
 
@@ -30,7 +31,7 @@ public class LoginRequest {
 	private String password;
 
 	@NotNull(message = "Refresh Token cannot be Null", groups = {FlowRefresh.class})
-	@NotEmpty(message = "Refresh Token cannot be Empty")
+	@NotEmpty(message = "Refresh Token cannot be Empty", groups = {FlowRefresh.class})
 	@JsonProperty("refreshToken")
 	private String refreshToken;
 	
