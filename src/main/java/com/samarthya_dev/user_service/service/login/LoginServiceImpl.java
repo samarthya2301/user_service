@@ -133,16 +133,43 @@ public class LoginServiceImpl implements LoginService {
 		log.info("Searching user by E-Mail in Database");
 
 		LoginResponse loginResponse = userRepository.findByEmail(refreshRequest.getEmail())
-    		.flatMap(userEntity -> refreshTokenRepository.findValidRefreshTokenForUser(refreshRequest.getEmail(), refreshRequest.getRefreshToken()))
-    		.map(tokenEntity -> LoginResponse.builder().message(tokenEntity.getToken()).build())
-			.orElseGet(() -> LoginResponse.builder().message("hizru").build());
+    		.flatMap(userEntity -> {
+
+				log.info("User found in Database");
+
+				log.info("Searching Refresh Token Entity for User in Database");
+
+				return refreshTokenRepository.findValidRefreshTokenForUser(refreshRequest.getEmail(), refreshRequest.getRefreshToken())
+					.map(tokenEntity -> {
+
+						log.info("Valid Refresh Token Entity Found for User in Database");
+
+						log.info("Generating JWT for User");
+						String jwtToken = jwtService.generateToken(userEntity);
+						log.info("JWT Created for User");
+
+						return LoginResponse
+							.builder()
+							.accessToken(jwtToken)
+							.refreshToken(tokenEntity.getToken())
+							.tokenType("Bearer")
+							.message("Bearer JWT Renewed Successfully")
+							.build();
+
+					});
+
+			})
+			.orElseGet(() -> {
+
+				log.info("Valid User or Refresh Token was not found in the Database");
+				return LoginResponse
+					.builder()
+					.message("Invalid E-Mail or Refresh Token received")
+					.build();
+
+			});
 
 		return loginResponse;
-
-		// 1. validate refresh token
-		// 2. issue new jwt access if refresh valid
-		// 3. send appropriate response
-		// 4. if exisiting jwt valid, return the same
 
 	}
 	
