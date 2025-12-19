@@ -23,7 +23,7 @@ public class CheckAndTestController {
 
 	@PostMapping(path = "/test-auth", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
 	public String postMethodName(@RequestBody @Valid TestAuthRequest testAuthRequest) {
-		return "User Authentication Successful: " + testAuthRequest.getEmail();
+		return "User Authentication Successful: " + testAuthRequest.getMessage();
 	}
 	
 }

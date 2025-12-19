@@ -4,13 +4,22 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.samarthya_dev.user_service.filter.JwtAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+	@Bean
+	JwtAuthenticationFilter jwtAuthenticationFilter() {
+		return new JwtAuthenticationFilter();
+	}
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -18,12 +27,19 @@ public class SecurityConfig {
 			.csrf(csrf -> csrf.disable())
 			.authorizeHttpRequests(
 				auth -> auth
-					.requestMatchers("/register", "/otp/request", "/otp/verify")
+					.requestMatchers(
+						"/register",
+						"/otp/request",
+						"/otp/verify",
+						"/login",
+						"/refresh-token"
+					)
 					.permitAll()
 					.anyRequest()
-					// TODO: to be changed to - authenticated() afterwards
-					.permitAll()
+					.authenticated()
 			)
+			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+			.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
 			.httpBasic(customizer -> customizer.disable())
 			.formLogin(form -> form.disable())
 			.build();
