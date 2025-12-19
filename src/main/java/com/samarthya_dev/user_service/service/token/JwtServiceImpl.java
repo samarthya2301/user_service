@@ -46,6 +46,20 @@ public class JwtServiceImpl implements JwtService {
 	}
 
 	@Override
+	public String extractUserEmail(String token) {
+
+		Claims tokenClaims = Jwts
+			.parser()
+			.verifyWith(signingKey())
+			.build()
+			.parseSignedClaims(token)
+			.getPayload();
+
+		return tokenClaims.get("user_email", String.class);
+
+	}
+
+	@Override
 	public Boolean isTokenValid(UserEntity userEntity, String token) {
 
 		try {
@@ -57,7 +71,7 @@ public class JwtServiceImpl implements JwtService {
 				.parseSignedClaims(token)
 				.getPayload();
 
-			if ( !tokenClaims.get("user_id").equals(userEntity.getId()) || !tokenClaims.get("user_email").equals(userEntity.getEmail())) {
+			if ( !tokenClaims.get("user_id").equals(userEntity.getId().toString()) || !tokenClaims.get("user_email").equals(userEntity.getEmail())) {
 				throw new JwtException("User Identity/E-Mail Does Not Match");
 			}
 
