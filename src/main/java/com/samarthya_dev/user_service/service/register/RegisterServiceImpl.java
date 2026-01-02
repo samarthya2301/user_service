@@ -1,7 +1,6 @@
 package com.samarthya_dev.user_service.service.register;
 
 import org.hibernate.exception.ConstraintViolationException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -14,37 +13,18 @@ import com.samarthya_dev.user_service.entity.user.UserEntity;
 import com.samarthya_dev.user_service.repository.AuthProviderRepository;
 import com.samarthya_dev.user_service.repository.UserRepository;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class RegisterServiceImpl implements RegisterService {
 
-	@Autowired
 	private final UserRepository userRepository;
-
-	@Autowired
 	private final AuthProviderRepository authProviderRepository;
-
-	@Autowired
 	private final RegisterRequestToUserEntityTransformation registerRequestToUserEntityTransformation;
-
-	@Autowired
 	private final AuthProviderForUserEntityCreator authProviderForUserEntityCreator;
-
-	RegisterServiceImpl(
-		UserRepository userRepository,
-		AuthProviderRepository authProviderRepository,
-		RegisterRequestToUserEntityTransformation registerRequestToUserEntityTransformation,
-		AuthProviderForUserEntityCreator authProviderForUserEntityCreator
-	) {
-
-		this.userRepository = userRepository;
-		this.authProviderRepository = authProviderRepository;
-		this.registerRequestToUserEntityTransformation = registerRequestToUserEntityTransformation;
-		this.authProviderForUserEntityCreator = authProviderForUserEntityCreator;
-
-	}
 
 	/**
 	 * Transforms RegisterRequest into UserEntity
