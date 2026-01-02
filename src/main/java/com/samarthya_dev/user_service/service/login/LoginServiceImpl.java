@@ -3,7 +3,6 @@ package com.samarthya_dev.user_service.service.login;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,40 +15,19 @@ import com.samarthya_dev.user_service.repository.UserRepository;
 import com.samarthya_dev.user_service.service.token.JwtService;
 import com.samarthya_dev.user_service.service.token.RefreshService;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class LoginServiceImpl implements LoginService {
 
-	@Autowired
 	private final UserRepository userRepository;
-
-	@Autowired
 	private final PasswordEncoder passwordEncoder;
-
-	@Autowired
 	private final JwtService jwtService;
-
-	@Autowired
 	private final RefreshService refreshService;
-
-	@Autowired
 	private final RefreshTokenRepository refreshTokenRepository;
-
-	LoginServiceImpl(
-		UserRepository userRepository,
-		PasswordEncoder passwordEncoder,
-		JwtService jwtService,
-		RefreshService refreshService,
-		RefreshTokenRepository refreshTokenRepository
-	) {
-		this.userRepository = userRepository;
-		this.passwordEncoder = passwordEncoder;
-		this.jwtService = jwtService;
-		this.refreshService = refreshService;
-		this.refreshTokenRepository = refreshTokenRepository;
-	}
 
 	@Override
 	public LoginResponse login(LoginRequest loginRequest) {
