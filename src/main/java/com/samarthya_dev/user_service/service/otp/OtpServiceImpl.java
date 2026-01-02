@@ -3,7 +3,6 @@ package com.samarthya_dev.user_service.service.otp;
 import java.time.Instant;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -16,40 +15,19 @@ import com.samarthya_dev.user_service.entity.user.UserStatus;
 import com.samarthya_dev.user_service.repository.OtpRepository;
 import com.samarthya_dev.user_service.repository.UserRepository;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class OtpServiceImpl implements OtpService {
 
-	@Autowired
     private final OtpRepository otpRepository;
-
-	@Autowired
 	private final UserRepository userRepository;
-
-	@Autowired
 	private final RandomOtpEntityCreator randomOtpEntityCreator;
-
-	@Autowired
 	private final EmailService emailService;
-
-	@Autowired
 	private final TemplateEngine templateEngine;
-
-	public OtpServiceImpl(
-		UserRepository userRepository,
-		RandomOtpEntityCreator randomOtpEntityCreator,
-		OtpRepository otpRepository,
-		EmailService emailService,
-		TemplateEngine templateEngine
-	) {
-		this.userRepository = userRepository;
-		this.randomOtpEntityCreator = randomOtpEntityCreator;
-		this.otpRepository = otpRepository;
-		this.emailService = emailService;
-		this.templateEngine = templateEngine;
-	}
 
 	private void sendOtpOnEMail(String email, OtpEntity otpEntity) {
 
