@@ -4,25 +4,21 @@ import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Base64;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.samarthya_dev.user_service.entity.refresh_token.RefreshTokenEntity;
 import com.samarthya_dev.user_service.entity.user.UserEntity;
 import com.samarthya_dev.user_service.repository.RefreshTokenRepository;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class RefreshServiceImpl implements RefreshService {
 
-	@Autowired
 	private final RefreshTokenRepository refreshTokenRepository;
-
-	public RefreshServiceImpl(RefreshTokenRepository refreshTokenRepository) {
-		this.refreshTokenRepository = refreshTokenRepository;
-	}
 
 	private String random512BitBase64() {
 
