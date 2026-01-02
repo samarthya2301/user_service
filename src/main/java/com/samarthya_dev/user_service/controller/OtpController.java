@@ -7,9 +7,10 @@ import com.samarthya_dev.user_service.controller.flow_group.otp.FlowVerifyOtp;
 import com.samarthya_dev.user_service.dto.request.OtpRequest;
 import com.samarthya_dev.user_service.dto.response.OtpResponse;
 import com.samarthya_dev.user_service.service.otp.OtpService;
+
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,20 +20,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 public class OtpController {
 
-	@Autowired
 	private final OtpService otpService;
-
-	/**
-	 * Bean initialization constructor
-	 * @param otpService
-	 */
-	OtpController(
-		OtpService otpService
-	) {
-		this.otpService = otpService;
-	}
 
 	@PostMapping(path = "/otp/request", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<OtpResponse> otpRequest(@RequestBody @Validated(FlowRequestOtp.class) OtpRequest sendOtpRequest) {

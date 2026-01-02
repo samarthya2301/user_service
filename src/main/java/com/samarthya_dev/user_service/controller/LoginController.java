@@ -8,9 +8,9 @@ import com.samarthya_dev.user_service.dto.request.LoginRequest;
 import com.samarthya_dev.user_service.dto.response.LoginResponse;
 import com.samarthya_dev.user_service.service.login.LoginService;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,14 +21,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 public class LoginController {
 
-	@Autowired
 	private final LoginService loginService;
-
-	LoginController(LoginService loginService) {
-		this.loginService = loginService;
-	}
 
 	@PostMapping(path = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<LoginResponse> login(@RequestBody @Validated(FlowLogin.class) LoginRequest loginRequest) {
