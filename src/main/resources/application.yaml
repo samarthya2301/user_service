@@ -1,11 +1,17 @@
-server:
-  port: 3001
+controller:
+  paths:
+    check-and-test:
+      health-check: /healthCheck
+      test-auth: /test-auth
+    login:
+      login: /login
+      refresh-token: /refresh
+    otp:
+      otp-request: /otp/request
+      otp-verify: /otp/verify
+    register:
+      register: /register
 
-spring:
-  config:
-    import: "optional:file:.env[.properties]"
-  profiles:
-    active: dev
 
 logging:
   level:
@@ -15,3 +21,12 @@ logging:
 secrets:
   jwt:
     key: ${SECRETS_JWT_KEY}
+
+server:
+  port: 3001
+
+spring:
+  config:
+    import: "optional:file:.env[.properties]"
+  profiles:
+    active: dev

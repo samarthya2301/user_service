@@ -4,6 +4,41 @@
 			"name": "secrets.jwt.key",
 			"type": "java.lang.String",
 			"description": "Secret Key used for JWT Generation"
+		},
+		{
+			"name": "controller.paths.check-and-test.health-check",
+			"type": "java.lang.String",
+			"description": "A description for 'controller.paths.check-and-test.health-check'"
+		},
+		{
+			"name": "controller.paths.check-and-test.test-auth",
+			"type": "java.lang.String",
+			"description": "A description for 'controller.paths.check-and-test.test-auth'"
+		},
+		{
+			"name": "controller.paths.login.login",
+			"type": "java.lang.String",
+			"description": "A description for 'controller.paths.login.login'"
+		},
+		{
+			"name": "controller.paths.login.refresh-token",
+			"type": "java.lang.String",
+			"description": "A description for 'controller.paths.login.refresh-token'"
+		},
+		{
+			"name": "controller.paths.otp.otp-request",
+			"type": "java.lang.String",
+			"description": "A description for 'controller.paths.otp.otp-request'"
+		},
+		{
+			"name": "controller.paths.otp.otp-verify",
+			"type": "java.lang.String",
+			"description": "A description for 'controller.paths.otp.otp-verify'"
+		},
+		{
+			"name": "controller.paths.register.register",
+			"type": "java.lang.String",
+			"description": "A description for 'controller.paths.register.register'"
 		}
 	]
 }
