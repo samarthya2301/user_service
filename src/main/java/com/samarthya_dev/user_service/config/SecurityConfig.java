@@ -28,6 +28,7 @@ public class SecurityConfig {
 			.authorizeHttpRequests(
 				auth -> auth
 					.requestMatchers(
+						"/healthCheck",
 						"/register",
 						"/otp/request",
 						"/otp/verify",
