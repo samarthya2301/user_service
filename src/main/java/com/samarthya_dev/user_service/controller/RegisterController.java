@@ -27,7 +27,11 @@ public class RegisterController {
 	 * @param request E-Mail (Required), Password (Required), Phone Number (Optional)
 	 * @return Response Message
 	 */
-	@PostMapping(path = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(
+		path = "${controller.paths.register.register:/register}",
+		consumes = MediaType.APPLICATION_JSON_VALUE,
+		produces = MediaType.APPLICATION_JSON_VALUE
+	)
 	public ResponseEntity<ResgisterRespose> register(@RequestBody @Valid RegisterRequest request) {
 
 		log.info("Request Invoked on Endpoint: /register");

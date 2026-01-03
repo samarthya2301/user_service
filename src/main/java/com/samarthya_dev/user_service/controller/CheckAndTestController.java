@@ -16,12 +16,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RestController
 public class CheckAndTestController {
 
-	@GetMapping(path = "/healthCheck", produces = MediaType.TEXT_PLAIN_VALUE)
+	@GetMapping(
+		path = "${controller.paths.check-and-test.health-check:/healthCheck}",
+		produces = MediaType.TEXT_PLAIN_VALUE
+	)
 	public String healthCheck() {
 		return "user-service API is up and running!";
 	}
 
-	@PostMapping(path = "/test-auth", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
+	@PostMapping(
+		path = "${controller.paths.check-and-test.test-auth:/test-auth}",
+		consumes = MediaType.APPLICATION_JSON_VALUE,
+		produces = MediaType.TEXT_PLAIN_VALUE
+	)
 	public String postMethodName(@RequestBody @Valid TestAuthRequest testAuthRequest) {
 		return "User Authentication Successful: " + testAuthRequest.getMessage();
 	}

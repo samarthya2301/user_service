@@ -26,7 +26,11 @@ public class LoginController {
 
 	private final LoginService loginService;
 
-	@PostMapping(path = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(
+		path = "${controller.paths.login.login:/login}",
+		consumes = MediaType.APPLICATION_JSON_VALUE,
+		produces = MediaType.APPLICATION_JSON_VALUE
+	)
 	public ResponseEntity<LoginResponse> login(@RequestBody @Validated(FlowLogin.class) LoginRequest loginRequest) {
 
 		log.info("Request Invoked on Endpoint: /login");
@@ -43,7 +47,11 @@ public class LoginController {
 
 	}
 
-	@PostMapping(path = "/refresh-token", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(
+		path = "${controller.paths.login.refresh-token:/refresh-token}",
+		consumes = MediaType.APPLICATION_JSON_VALUE,
+		produces = MediaType.APPLICATION_JSON_VALUE
+	)
 	public ResponseEntity<LoginResponse> refresh(@RequestBody @Validated(FlowRefresh.class) LoginRequest refreshRequest) {
 
 		log.info("Request Invoked on Endpoint: /refresh-token");
