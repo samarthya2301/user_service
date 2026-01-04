@@ -1,8 +1,5 @@
 package com.samarthya_dev.user_service.service.login;
 
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -35,33 +32,9 @@ public class LoginServiceImpl implements LoginService {
 		log.info("Login Service Invoked");
 
 		log.info("Searching user by E-Mail in Database");
-		Optional<UserEntity> userEntityOptional = userRepository.findByEmail(loginRequest.getEmail());
+		UserEntity userEntity = userRepository.findByEmail(loginRequest.getEmail()).orElse(null);
 
-		final AtomicBoolean isEmailVerifiedAtm = new AtomicBoolean(Boolean.FALSE);
-		final AtomicBoolean isPasswordCorrectAtm = new AtomicBoolean(Boolean.FALSE);
-		final AtomicBoolean isUserAccountActiveAtm = new AtomicBoolean(Boolean.FALSE);
-		Boolean isUserRegistered = userEntityOptional
-			.filter(userEntity -> {
-				if (userEntity.getEmailVerified()) {
-					isEmailVerifiedAtm.set(Boolean.TRUE);
-				}
-				return isEmailVerifiedAtm.get();
-			})
-			.filter(userEntity -> {
-				if (passwordEncoder.matches(loginRequest.getPassword(), userEntity.getHashedPassword())) {
-					isPasswordCorrectAtm.set(Boolean.TRUE);
-				}
-				return isPasswordCorrectAtm.get();
-			})
-			.filter(userEntity -> {
-				if (userEntity.getStatus() == UserStatus.ACTIVE) {
-					isUserAccountActiveAtm.set(Boolean.TRUE);
-				}
-				return isUserAccountActiveAtm.get();
-			})
-			.isPresent();
-
-		if ( !isUserRegistered || !isPasswordCorrectAtm.get()) {
+		if (userEntity == null || !passwordEncoder.matches(loginRequest.getPassword(), userEntity.getHashedPassword())) {
 
 			log.info("Queried User not found in Database or the Password was Incorrect");
 
@@ -72,7 +45,7 @@ public class LoginServiceImpl implements LoginService {
 
 		}
 
-		if ( !isEmailVerifiedAtm.get() || !isUserAccountActiveAtm.get()) {
+		if ( !userEntity.getEmailVerified() || userEntity.getStatus() != UserStatus.ACTIVE) {
 
 			log.info("Queried User's E-Mail is not Verified and is DISABLED");
 
@@ -86,11 +59,11 @@ public class LoginServiceImpl implements LoginService {
 		log.info("Valid User with Correct Password and Verified E-Mail found in Database");
 
 		log.info("Generating Refresh Token for User");
-		String refreshToken = refreshService.generateToken(userEntityOptional.get());
+		String refreshToken = refreshService.generateToken(userEntity);
 		log.info("Refresh Token Created for User");
 
 		log.info("Generating JWT for User");
-		String jwtToken = jwtService.generateToken(userEntityOptional.get());
+		String jwtToken = jwtService.generateToken(userEntity);
 		log.info("JWT Created for User");
 
 		return LoginResponse
@@ -100,7 +73,7 @@ public class LoginServiceImpl implements LoginService {
 			.tokenType("Bearer")
 			.message("User Logged In Successfully")
 			.build();
-		
+
 	}
 
 	@Override
