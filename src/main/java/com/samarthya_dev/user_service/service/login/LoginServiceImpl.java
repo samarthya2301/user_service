@@ -96,7 +96,7 @@ public class LoginServiceImpl implements LoginService {
 
 		log.info("Searching user by E-Mail in Database");
 
-		LoginResponse loginResponse = userRepository.findByEmail(refreshRequest.getEmail())
+		return userRepository.findByEmail(refreshRequest.getEmail())
     		.flatMap(userEntity -> {
 
 				log.info("User found in Database");
@@ -124,16 +124,11 @@ public class LoginServiceImpl implements LoginService {
 
 			})
 			.orElseGet(() -> {
-
-				log.info("Valid User or Refresh Token was not found in the Database");
-				return LoginResponse
-					.builder()
-					.message("Invalid E-Mail or Refresh Token received")
-					.build();
-
+				return logMessageAndCreateLoginResponse(
+					"Valid User or Refresh Token was not found in the Database",
+					"Invalid E-Mail or Refresh Token received"
+				);
 			});
-
-		return loginResponse;
 
 	}
 	
