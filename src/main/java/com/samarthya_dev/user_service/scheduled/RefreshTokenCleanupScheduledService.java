@@ -17,9 +17,9 @@ public class RefreshTokenCleanupScheduledService {
 	
 	/**
 	 * Scheduled method to cleap up expired Refresh Tokens
-	 * Method will run every 24 hours; 24 hours = 86400000 (24 * 60 * 60 * 1000) milliseconds
+	 * Method will run every midnight
 	 */
-	@Scheduled(fixedRate = 86_400_000L)
+	@Scheduled(cron = "0 0 0 * * *")
 	public void cleanupConsumedOrExpiredOtps() {
 
 		Integer refreshTokensCleanedUpCount = refreshTokenRepository.deleteRevokedOrExpiredRefreshTokens();
