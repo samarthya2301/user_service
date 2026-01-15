@@ -51,11 +51,5 @@ public class RefreshServiceImpl implements RefreshService {
 		return refreshTokenEntity.getToken();
 
 	}
-
-	@Override
-	public Boolean isTokenValid(UserEntity userEntity, String token) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'isTokenValid'");
-	}
 	
 }
