@@ -5,7 +5,7 @@ controller:
       test-auth: /test-auth
     login:
       login: /login
-      refresh-token: /refresh
+      refresh-token: /refresh-token
     otp:
       otp-request: /otp/request
       otp-verify: /otp/verify
