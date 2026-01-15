@@ -32,6 +32,10 @@ public class RefreshServiceImpl implements RefreshService {
 
     }
 
+	/**
+	 * Generates a token with an expiry of 7 days after its creation
+	 * Expiry is 7 days = 604800000 (7 * 24 * 60 * 60 * 1000) milliseconds after creation
+	 */
 	@Override
 	public String generateToken(UserEntity userEntity) {
 
@@ -40,8 +44,8 @@ public class RefreshServiceImpl implements RefreshService {
 			.user(userEntity)
 			.token(random512BitBase64())
 			.createdTimestamp(Instant.now())
-			.expiresTimestamp(Instant.now().plusSeconds(604_800L))
-			.revoked(Boolean.FALSE) // TODO:  set to true once expired & schedule a task
+			.expiresTimestamp(Instant.now().plusMillis(604_800_000L))
+			.revoked(Boolean.FALSE)
 			.build();
 
 		log.info("Saving Refresh Token Entity into Database");
