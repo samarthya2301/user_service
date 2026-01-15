@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "refresh_token", indexes = {
-	@Index(name = "idx_expiresTimestamp", columnList = "expires_timestamp")
+	@Index(name = "idx_expires_timestamp", columnList = "expires_timestamp")
 })
 public class RefreshTokenEntity {
 	
