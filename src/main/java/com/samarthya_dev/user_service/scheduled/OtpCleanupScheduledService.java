@@ -15,6 +15,10 @@ public class OtpCleanupScheduledService {
 
 	private final OtpRepository otpRepository;
 
+	/**
+	 * Scheduled method to cleap up consumed or expired OTPs
+	 * Method will run every 30 minutes; 30 minutes = 1800000 (30 * 60 * 1000) milliseconds
+	 */
 	@Scheduled(fixedRate = 1_800_000L)
 	public void cleanupConsumedOrExpiredOtps() {
 
