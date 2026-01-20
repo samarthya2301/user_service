@@ -1,5 +1,6 @@
 package com.samarthya_dev.user_service.config;
 
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -10,16 +11,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.samarthya_dev.user_service.config.properties.common.ControllerPathsConfig;
 import com.samarthya_dev.user_service.filter.JwtAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
+@EnableConfigurationProperties(ControllerPathsConfig.class)
 @RequiredArgsConstructor
 public class SecurityConfig {
 
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
+	private final ControllerPathsConfig controllerPathsConig;
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -28,12 +32,12 @@ public class SecurityConfig {
 			.authorizeHttpRequests(
 				auth -> auth
 					.requestMatchers(
-						"/healthCheck",
-						"/register",
-						"/otp/request",
-						"/otp/verify",
-						"/login",
-						"/refresh-token"
+						controllerPathsConig.getCheckAndTest().getHealthCheck(),
+						controllerPathsConig.getRegister().getRegister(),
+						controllerPathsConig.getOtp().getOtpRequest(),
+						controllerPathsConig.getOtp().getOtpVerify(),
+						controllerPathsConig.getLogin().getLogin(),
+						controllerPathsConig.getLogin().getRefreshToken()
 					)
 					.permitAll()
 					.anyRequest()
