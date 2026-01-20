@@ -6,27 +6,30 @@ import java.util.Date;
 
 import javax.crypto.SecretKey;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
 
+import com.samarthya_dev.user_service.config.properties.common.SecretsJwtConfig;
 import com.samarthya_dev.user_service.entity.user.UserEntity;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
+@EnableConfigurationProperties(SecretsJwtConfig.class)
+@RequiredArgsConstructor
 public class JwtServiceImpl implements JwtService {
 
-	@Value("${secrets.jwt.key}")
-	private String SECRETS_JWT_KEY;
+	private final SecretsJwtConfig secretsJwtConfig;
 
 	private SecretKey signingKey() {
 
-		byte[] keyBytes = SECRETS_JWT_KEY.getBytes(StandardCharsets.UTF_8);
+		byte[] keyBytes = secretsJwtConfig.getKey().getBytes(StandardCharsets.UTF_8);
 		return Keys.hmacShaKeyFor(keyBytes);
 
 	}
@@ -36,7 +39,7 @@ public class JwtServiceImpl implements JwtService {
 		return Jwts
 			.builder()
 			.subject(userEntity.getEmail())
-			.claim("user_id", userEntity.getId())
+			.claim("user_id", userEntity.getId().toString())
 			.claim("user_email", userEntity.getEmail())
 			.claim("user_role", userEntity.getRole().getFirst())
 			.issuedAt(Date.from(Instant.now()))
