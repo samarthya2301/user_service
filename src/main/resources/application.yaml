@@ -14,7 +14,10 @@ controller:
 
 service:
   otp:
-    expire-after: 5m
+    email:
+      send-email-source: expenseintelligence@samarthya2301.in
+    creator:
+      expire-after: 5m
   token:
     jwt:
       claim:

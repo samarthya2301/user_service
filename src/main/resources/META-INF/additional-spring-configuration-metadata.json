@@ -56,11 +56,6 @@
 			"description": "A description for 'service.token.jwt.claim.key.user-role'"
 		},
 		{
-			"name": "service.otp.expire-after",
-			"type": "java.lang.String",
-			"description": "A description for 'service.otp.expire-after'"
-		},
-		{
 			"name": "service.token.jwt.expire-after",
 			"type": "java.lang.String",
 			"description": "A description for 'service.token.jwt.expire-after'"
@@ -69,6 +64,16 @@
 			"name": "service.token.refresh.expire-after",
 			"type": "java.lang.String",
 			"description": "A description for 'service.token.refresh.expire-after'"
+		},
+		{
+			"name": "service.otp.email.send-email-source",
+			"type": "java.lang.String",
+			"description": "A description for 'service.otp.email.send-email-source'"
+		},
+		{
+			"name": "service.otp.creator.expire-after",
+			"type": "java.lang.String",
+			"description": "A description for 'service.otp.creator.expire-after'"
 		}
 	]
 }
