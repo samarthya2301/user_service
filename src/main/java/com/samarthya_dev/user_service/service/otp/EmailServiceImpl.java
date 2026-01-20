@@ -1,7 +1,11 @@
 package com.samarthya_dev.user_service.service.otp;
 
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import com.samarthya_dev.user_service.config.properties.common.ServiceConfig;
+
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.ses.SesClient;
@@ -13,7 +17,11 @@ import software.amazon.awssdk.services.ses.model.SendEmailRequest;
 
 @Slf4j
 @Component
+@EnableConfigurationProperties(ServiceConfig.class)
+@RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
+
+	private final ServiceConfig serviceConfig;
 
 	@Override
 	public void sendEMail(String emailTo, String subjectData, String bodyData) {
@@ -43,7 +51,7 @@ public class EmailServiceImpl implements EmailService {
 		SendEmailRequest emailRequest = SendEmailRequest.builder()
 			.destination(destination)
 			.message(message)
-			.source("expenseintelligence@samarthya2301.in")
+			.source(serviceConfig.getOtp().getEmail().getSendEmailSource())
 			.build();
 
 		log.info("Sending E-Mail from {} to {}", emailRequest.source(), emailRequest.destination().toAddresses());
