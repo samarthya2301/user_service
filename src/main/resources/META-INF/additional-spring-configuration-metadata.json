@@ -39,6 +39,36 @@
 			"name": "controller.paths.register.register",
 			"type": "java.lang.String",
 			"description": "A description for 'controller.paths.register.register'"
+		},
+		{
+			"name": "service.otp.expire-after-seconds",
+			"type": "java.lang.String",
+			"description": "A description for 'service.otp.expire-after-seconds'"
+		},
+		{
+			"name": "service.token.jwt.claim.key.user-id",
+			"type": "java.lang.String",
+			"description": "A description for 'service.token.jwt.claim.key.user-id'"
+		},
+		{
+			"name": "service.token.jwt.claim.key.user-email",
+			"type": "java.lang.String",
+			"description": "A description for 'service.token.jwt.claim.key.user-email'"
+		},
+		{
+			"name": "service.token.jwt.claim.key.user-role",
+			"type": "java.lang.String",
+			"description": "A description for 'service.token.jwt.claim.key.user-role'"
+		},
+		{
+			"name": "service.token.jwt.expire-after-seconds",
+			"type": "java.lang.String",
+			"description": "A description for 'service.token.jwt.expire-after-seconds'"
+		},
+		{
+			"name": "service.token.refresh.expire-after-seconds",
+			"type": "java.lang.String",
+			"description": "A description for 'service.token.refresh.expire-after-seconds'"
 		}
 	]
 }

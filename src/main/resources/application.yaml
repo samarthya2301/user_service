@@ -12,6 +12,19 @@ controller:
     register:
       register: /register
 
+service:
+  otp:
+    expire-after-seconds: 300
+  token:
+    jwt:
+      claim:
+        key:
+          user-id: user_id
+          user-email: user_email
+          user-role: user_role
+      expire-after-seconds: 86400
+    refresh:
+      expire-after-seconds: 604800
 
 logging:
   level:
