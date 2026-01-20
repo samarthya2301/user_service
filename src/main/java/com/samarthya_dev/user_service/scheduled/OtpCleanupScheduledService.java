@@ -16,7 +16,7 @@ public class OtpCleanupScheduledService {
 	private final OtpRepository otpRepository;
 
 	/**
-	 * Scheduled method to cleap up consumed or expired OTPs
+	 * Scheduled method to clean up consumed or expired OTPs
 	 * Method will run every 15 minutes
 	 */
 	@Scheduled(cron = "0 0/15 * * * *")

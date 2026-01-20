@@ -16,7 +16,7 @@ public class RefreshTokenCleanupScheduledService {
 	private final RefreshTokenRepository refreshTokenRepository;
 	
 	/**
-	 * Scheduled method to cleap up expired Refresh Tokens
+	 * Scheduled method to clean up expired Refresh Tokens
 	 * Method will run every midnight
 	 */
 	@Scheduled(cron = "0 0 0 * * *")
@@ -26,4 +26,5 @@ public class RefreshTokenCleanupScheduledService {
 		log.info("Revoked and Expired Refresh Tokens Deleted: {}", refreshTokensCleanedUpCount);
 
 	}
+	
 }
