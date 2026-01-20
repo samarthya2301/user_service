@@ -1,6 +1,7 @@
 package com.samarthya_dev.user_service.service.token;
 
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Answers;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -20,10 +21,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.*;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 import org.mockito.Mock;
 import com.samarthya_dev.user_service.config.properties.common.SecretsJwtConfig;
+import com.samarthya_dev.user_service.config.properties.common.ServiceConfig;
 
 @ExtendWith(MockitoExtension.class)
 class JwtServiceTest {
@@ -31,17 +34,28 @@ class JwtServiceTest {
 	@Mock
 	private SecretsJwtConfig secretsJwtConfig;
 
+	@Mock(answer = Answers.RETURNS_DEEP_STUBS)
+	private ServiceConfig serviceConfig;
+
 	@InjectMocks
 	private JwtServiceImpl jwtService;
 
 	private static final String TEST_JWT_SECRET = "this-is-a-very-secure-jwt-secret-key-256-bit-minimum";
+	private static final String USER_ID_CLAIM = "user_id";
+	private static final String USER_EMAIL_CLAIM = "user_email";
+	private static final String USER_ROLE_CLAIM = "user_role";
+	private static final Duration EXPIRY_SECONDS = Duration.ofDays(1);
 
 	private UserEntity userEntity;
 
 	@BeforeEach
 	void setUp() {
 
-		when(secretsJwtConfig.getKey()).thenReturn(TEST_JWT_SECRET);
+		when(secretsJwtConfig.getKey())
+				.thenReturn(TEST_JWT_SECRET);
+
+		when(serviceConfig.getToken().getJwt().getExpireAfter())
+				.thenReturn(EXPIRY_SECONDS);
 
 		userEntity = UserEntity.builder()
 				.id(UUID.randomUUID())
@@ -52,8 +66,17 @@ class JwtServiceTest {
 	}
 
 	@Test
-	@DisplayName("Generate token - token generated successfully")
+	@DisplayName("Generate token - token is generated successfully")
 	void generateTokenSuccess() {
+
+		when(serviceConfig.getToken().getJwt().getClaim().getKey().getUserId())
+				.thenReturn(USER_ID_CLAIM);
+
+		when(serviceConfig.getToken().getJwt().getClaim().getKey().getUserEmail())
+				.thenReturn(USER_EMAIL_CLAIM);
+
+		when(serviceConfig.getToken().getJwt().getClaim().getKey().getUserRole())
+				.thenReturn(USER_ROLE_CLAIM);
 
 		String token = jwtService.generateToken(userEntity);
 
@@ -66,6 +89,15 @@ class JwtServiceTest {
 	@DisplayName("Extract user email from valid token")
 	void extractUserEmailSuccess() {
 
+		when(serviceConfig.getToken().getJwt().getClaim().getKey().getUserId())
+				.thenReturn(USER_ID_CLAIM);
+
+		when(serviceConfig.getToken().getJwt().getClaim().getKey().getUserEmail())
+				.thenReturn(USER_EMAIL_CLAIM);
+
+		when(serviceConfig.getToken().getJwt().getClaim().getKey().getUserRole())
+				.thenReturn(USER_ROLE_CLAIM);
+
 		String token = jwtService.generateToken(userEntity);
 
 		String extractedEmail = jwtService.extractUserEmail(token);
@@ -75,8 +107,17 @@ class JwtServiceTest {
 	}
 
 	@Test
-	@DisplayName("Token validation success - matching UUID and email")
+	@DisplayName("Token validation success - UUID and email match")
 	void tokenValidationSuccess() {
+
+		when(serviceConfig.getToken().getJwt().getClaim().getKey().getUserId())
+				.thenReturn(USER_ID_CLAIM);
+
+		when(serviceConfig.getToken().getJwt().getClaim().getKey().getUserEmail())
+				.thenReturn(USER_EMAIL_CLAIM);
+
+		when(serviceConfig.getToken().getJwt().getClaim().getKey().getUserRole())
+				.thenReturn(USER_ROLE_CLAIM);
 
 		String token = jwtService.generateToken(userEntity);
 
@@ -89,6 +130,15 @@ class JwtServiceTest {
 	@Test
 	@DisplayName("Token validation failure - email mismatch")
 	void tokenValidationFailsForEmailMismatch() {
+
+		when(serviceConfig.getToken().getJwt().getClaim().getKey().getUserId())
+				.thenReturn(USER_ID_CLAIM);
+
+		when(serviceConfig.getToken().getJwt().getClaim().getKey().getUserEmail())
+				.thenReturn(USER_EMAIL_CLAIM);
+
+		when(serviceConfig.getToken().getJwt().getClaim().getKey().getUserRole())
+				.thenReturn(USER_ROLE_CLAIM);
 
 		String token = jwtService.generateToken(userEntity);
 
@@ -105,8 +155,17 @@ class JwtServiceTest {
 	}
 
 	@Test
-	@DisplayName("Token validation failure - UUID mismatch")
+	@DisplayName("Token validation failure - user id mismatch")
 	void tokenValidationFailsForUserIdMismatch() {
+
+		when(serviceConfig.getToken().getJwt().getClaim().getKey().getUserId())
+				.thenReturn(USER_ID_CLAIM);
+
+		when(serviceConfig.getToken().getJwt().getClaim().getKey().getUserEmail())
+				.thenReturn(USER_EMAIL_CLAIM);
+
+		when(serviceConfig.getToken().getJwt().getClaim().getKey().getUserRole())
+				.thenReturn(USER_ROLE_CLAIM);
 
 		String token = jwtService.generateToken(userEntity);
 
@@ -128,9 +187,9 @@ class JwtServiceTest {
 
 		String expiredToken = Jwts.builder()
 				.subject(userEntity.getEmail())
-				.claim("user_id", userEntity.getId().toString())
-				.claim("user_email", userEntity.getEmail())
-				.claim("user_role", userEntity.getRole().getFirst())
+				.claim(USER_ID_CLAIM, userEntity.getId().toString())
+				.claim(USER_EMAIL_CLAIM, userEntity.getEmail())
+				.claim(USER_ROLE_CLAIM, userEntity.getRole().getFirst())
 				.issuedAt(Date.from(Instant.now().minusSeconds(120)))
 				.expiration(Date.from(Instant.now().minusSeconds(60)))
 				.signWith(Keys.hmacShaKeyFor(TEST_JWT_SECRET.getBytes()))
@@ -146,7 +205,7 @@ class JwtServiceTest {
 	@DisplayName("Token validation failure - malformed token")
 	void tokenValidationFailsForMalformedToken() {
 
-		Boolean isValid = jwtService.isTokenValid(userEntity, "not-a-valid-jwt");
+		Boolean isValid = jwtService.isTokenValid(userEntity, "not-a-jwt");
 
 		assertFalse(isValid);
 
@@ -158,8 +217,8 @@ class JwtServiceTest {
 
 		String tokenWithDifferentSecret = Jwts.builder()
 				.subject(userEntity.getEmail())
-				.claim("user_id", userEntity.getId().toString())
-				.claim("user_email", userEntity.getEmail())
+				.claim(USER_ID_CLAIM, userEntity.getId().toString())
+				.claim(USER_EMAIL_CLAIM, userEntity.getEmail())
 				.signWith(Keys.hmacShaKeyFor("another-secret-key-another-secret-key".getBytes()))
 				.compact();
 
