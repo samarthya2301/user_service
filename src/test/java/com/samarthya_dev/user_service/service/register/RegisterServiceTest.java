@@ -1,4 +1,4 @@
-package com.samarthya_dev.user_service.service.tegister;
+package com.samarthya_dev.user_service.service.register;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -24,9 +24,6 @@ import com.samarthya_dev.user_service.entity.auth_provider.AuthProviderType;
 import com.samarthya_dev.user_service.entity.user.UserEntity;
 import com.samarthya_dev.user_service.repository.AuthProviderRepository;
 import com.samarthya_dev.user_service.repository.UserRepository;
-import com.samarthya_dev.user_service.service.register.AuthProviderForUserEntityCreator;
-import com.samarthya_dev.user_service.service.register.RegisterRequestToUserEntityTransformation;
-import com.samarthya_dev.user_service.service.register.RegisterServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 public class RegisterServiceTest {
