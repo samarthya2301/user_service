@@ -1,6 +1,7 @@
 package com.samarthya_dev.user_service.service.token;
 
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.samarthya_dev.user_service.entity.user.UserEntity;
@@ -11,19 +12,26 @@ import io.jsonwebtoken.security.Keys;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.lang.reflect.Field;
-import java.time.Instant;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import static org.mockito.Mockito.*;
+
+import java.time.Instant;
+import java.util.Date;
+import org.mockito.Mock;
+import com.samarthya_dev.user_service.config.properties.common.SecretsJwtConfig;
 
 @ExtendWith(MockitoExtension.class)
-public class JwtServiceTest {
+class JwtServiceTest {
 
+	@Mock
+	private SecretsJwtConfig secretsJwtConfig;
+
+	@InjectMocks
 	private JwtServiceImpl jwtService;
 
 	private static final String TEST_JWT_SECRET = "this-is-a-very-secure-jwt-secret-key-256-bit-minimum";
@@ -31,13 +39,9 @@ public class JwtServiceTest {
 	private UserEntity userEntity;
 
 	@BeforeEach
-	void setUp() throws Exception {
+	void setUp() {
 
-		jwtService = new JwtServiceImpl();
-
-		Field secretField = JwtServiceImpl.class.getDeclaredField("SECRETS_JWT_KEY");
-		secretField.setAccessible(true);
-		secretField.set(jwtService, TEST_JWT_SECRET);
+		when(secretsJwtConfig.getKey()).thenReturn(TEST_JWT_SECRET);
 
 		userEntity = UserEntity.builder()
 				.id(UUID.randomUUID())
@@ -48,7 +52,7 @@ public class JwtServiceTest {
 	}
 
 	@Test
-	@DisplayName("Generate token - token is not null and parsable")
+	@DisplayName("Generate token - token generated successfully")
 	void generateTokenSuccess() {
 
 		String token = jwtService.generateToken(userEntity);
@@ -71,7 +75,7 @@ public class JwtServiceTest {
 	}
 
 	@Test
-	@DisplayName("Token validation success - valid token and matching user")
+	@DisplayName("Token validation success - matching UUID and email")
 	void tokenValidationSuccess() {
 
 		String token = jwtService.generateToken(userEntity);
@@ -101,7 +105,7 @@ public class JwtServiceTest {
 	}
 
 	@Test
-	@DisplayName("Token validation failure - user id mismatch")
+	@DisplayName("Token validation failure - UUID mismatch")
 	void tokenValidationFailsForUserIdMismatch() {
 
 		String token = jwtService.generateToken(userEntity);
@@ -120,11 +124,11 @@ public class JwtServiceTest {
 
 	@Test
 	@DisplayName("Token validation failure - expired token")
-	void tokenValidationFailsForExpiredToken() throws Exception {
+	void tokenValidationFailsForExpiredToken() {
 
 		String expiredToken = Jwts.builder()
 				.subject(userEntity.getEmail())
-				.claim("user_id", userEntity.getId())
+				.claim("user_id", userEntity.getId().toString())
 				.claim("user_email", userEntity.getEmail())
 				.claim("user_role", userEntity.getRole().getFirst())
 				.issuedAt(Date.from(Instant.now().minusSeconds(120)))
@@ -142,19 +146,19 @@ public class JwtServiceTest {
 	@DisplayName("Token validation failure - malformed token")
 	void tokenValidationFailsForMalformedToken() {
 
-		Boolean isValid = jwtService.isTokenValid(userEntity, "not-a-jwt");
+		Boolean isValid = jwtService.isTokenValid(userEntity, "not-a-valid-jwt");
 
 		assertFalse(isValid);
 
 	}
 
 	@Test
-	@DisplayName("Token validation failure - token signed with different secret")
+	@DisplayName("Token validation failure - invalid signature")
 	void tokenValidationFailsForInvalidSignature() {
 
 		String tokenWithDifferentSecret = Jwts.builder()
 				.subject(userEntity.getEmail())
-				.claim("user_id", userEntity.getId())
+				.claim("user_id", userEntity.getId().toString())
 				.claim("user_email", userEntity.getEmail())
 				.signWith(Keys.hmacShaKeyFor("another-secret-key-another-secret-key".getBytes()))
 				.compact();
