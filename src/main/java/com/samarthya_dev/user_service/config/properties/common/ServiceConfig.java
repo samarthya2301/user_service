@@ -16,7 +16,22 @@ public class ServiceConfig {
     @Value
     public static class Otp {
 
-        Duration expireAfter;
+        Email email;
+        Creator creator;
+
+        @Value
+        public static class Email {
+
+            String sendEmailSource;
+
+        }
+
+        @Value
+        public static class Creator {
+
+            Duration expireAfter;
+
+        }
 
     }
 

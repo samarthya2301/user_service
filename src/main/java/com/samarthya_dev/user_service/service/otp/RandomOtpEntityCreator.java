@@ -30,7 +30,7 @@ public class RandomOtpEntityCreator {
 			.user(userEntity)
 			.otpCode(RandomUtils.secure().randomInt(100000, 1000000))
 			.createdTimestamp(Instant.now())
-			.expiresTimestamp(Instant.now().plus(serviceConfig.getOtp().getExpireAfter()))
+			.expiresTimestamp(Instant.now().plus(serviceConfig.getOtp().getCreator().getExpireAfter()))
 			.consumed(Boolean.FALSE)
 			.build();
 
