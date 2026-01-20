@@ -4,8 +4,10 @@ import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Base64;
 
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
 
+import com.samarthya_dev.user_service.config.properties.common.ServiceConfig;
 import com.samarthya_dev.user_service.entity.refresh_token.RefreshTokenEntity;
 import com.samarthya_dev.user_service.entity.user.UserEntity;
 import com.samarthya_dev.user_service.repository.RefreshTokenRepository;
@@ -15,10 +17,12 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
+@EnableConfigurationProperties(ServiceConfig.class)
 @RequiredArgsConstructor
 public class RefreshServiceImpl implements RefreshService {
 
 	private final RefreshTokenRepository refreshTokenRepository;
+	private final ServiceConfig serviceConfig;
 
 	private String random512BitBase64() {
 
@@ -34,7 +38,7 @@ public class RefreshServiceImpl implements RefreshService {
 
 	/**
 	 * Generates a token with an expiry of 7 days after its creation
-	 * Expiry is 7 days = 604800000 (7 * 24 * 60 * 60 * 1000) milliseconds after creation
+	 * Expiry is 7 days = 604800 (7 * 24 * 60 * 60) seconds after creation
 	 */
 	@Override
 	public String generateToken(UserEntity userEntity) {
@@ -44,7 +48,7 @@ public class RefreshServiceImpl implements RefreshService {
 			.user(userEntity)
 			.token(random512BitBase64())
 			.createdTimestamp(Instant.now())
-			.expiresTimestamp(Instant.now().plusMillis(604_800_000L))
+			.expiresTimestamp(Instant.now().plus(serviceConfig.getToken().getRefresh().getExpireAfter()))
 			.revoked(Boolean.FALSE)
 			.build();
 

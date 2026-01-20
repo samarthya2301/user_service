@@ -10,6 +10,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.stereotype.Service;
 
 import com.samarthya_dev.user_service.config.properties.common.SecretsJwtConfig;
+import com.samarthya_dev.user_service.config.properties.common.ServiceConfig;
 import com.samarthya_dev.user_service.entity.user.UserEntity;
 
 import io.jsonwebtoken.Claims;
@@ -21,11 +22,12 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-@EnableConfigurationProperties(SecretsJwtConfig.class)
+@EnableConfigurationProperties({SecretsJwtConfig.class, ServiceConfig.class})
 @RequiredArgsConstructor
 public class JwtServiceImpl implements JwtService {
 
 	private final SecretsJwtConfig secretsJwtConfig;
+	private final ServiceConfig serviceConfig;
 
 	private SecretKey signingKey() {
 
@@ -39,11 +41,11 @@ public class JwtServiceImpl implements JwtService {
 		return Jwts
 			.builder()
 			.subject(userEntity.getEmail())
-			.claim("user_id", userEntity.getId().toString())
-			.claim("user_email", userEntity.getEmail())
-			.claim("user_role", userEntity.getRole().getFirst())
+			.claim(serviceConfig.getToken().getJwt().getClaim().getKey().getUserId(), userEntity.getId().toString())
+			.claim(serviceConfig.getToken().getJwt().getClaim().getKey().getUserEmail(), userEntity.getEmail())
+			.claim(serviceConfig.getToken().getJwt().getClaim().getKey().getUserRole(), userEntity.getRole().getFirst())
 			.issuedAt(Date.from(Instant.now()))
-			.expiration(Date.from(Instant.now().plusSeconds(86_400L)))
+			.expiration(Date.from(Instant.now().plus(serviceConfig.getToken().getJwt().getExpireAfter())))
 			.signWith(signingKey())
 			.compact();
 	}
@@ -58,7 +60,7 @@ public class JwtServiceImpl implements JwtService {
 			.parseSignedClaims(token)
 			.getPayload();
 
-		return tokenClaims.get("user_email", String.class);
+		return tokenClaims.get(serviceConfig.getToken().getJwt().getClaim().getKey().getUserEmail(), String.class);
 
 	}
 
@@ -74,7 +76,10 @@ public class JwtServiceImpl implements JwtService {
 				.parseSignedClaims(token)
 				.getPayload();
 
-			if ( !tokenClaims.get("user_id").equals(userEntity.getId().toString()) || !tokenClaims.get("user_email").equals(userEntity.getEmail())) {
+			if (
+				!tokenClaims.get(serviceConfig.getToken().getJwt().getClaim().getKey().getUserId()).equals(userEntity.getId().toString()) ||
+				!tokenClaims.get(serviceConfig.getToken().getJwt().getClaim().getKey().getUserEmail()).equals(userEntity.getEmail())
+			) {
 				throw new JwtException("User Identity/E-Mail Does Not Match");
 			}
 
