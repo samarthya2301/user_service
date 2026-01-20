@@ -14,7 +14,7 @@ controller:
 
 service:
   otp:
-    expire-after-seconds: 300
+    expire-after: 5m
   token:
     jwt:
       claim:
@@ -22,9 +22,9 @@ service:
           user-id: user_id
           user-email: user_email
           user-role: user_role
-      expire-after-seconds: 86400
+      expire-after: 1d
     refresh:
-      expire-after-seconds: 604800
+      expire-after: 7d
 
 logging:
   level:
