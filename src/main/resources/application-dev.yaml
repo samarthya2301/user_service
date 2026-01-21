@@ -11,6 +11,6 @@ spring:
       platform: postgres
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/expense_intelligence}
-    username: ${SPRING_DATASOURCE_USERNAME:dev}
-    password: ${SPRING_DATASOURCE_PASSWORD:dev}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driverClassName: org.postgresql.Driver
