@@ -1,8 +1,3 @@
-server:
-  port: 3001
-  servlet:
-    context-path: /user
-
 spring:
   application:
     name: user-service
@@ -15,7 +10,7 @@ spring:
     init:
       platform: postgres
   datasource:
-    url: jdbc:postgresql://localhost:5432/expense_intelligence
-    username: 'dev1'
-    password: 'dev1'
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/expense_intelligence}
+    username: ${SPRING_DATASOURCE_USERNAME:dev}
+    password: ${SPRING_DATASOURCE_PASSWORD:dev}
     driverClassName: org.postgresql.Driver

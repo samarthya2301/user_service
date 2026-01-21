@@ -39,10 +39,12 @@ secrets:
     key: ${SECRETS_JWT_KEY}
 
 server:
-  port: 3001
+  port: ${SERVER_PORT:3001}
+  servlet:
+    context-path: /user
 
 spring:
   config:
     import: "optional:file:.env[.properties]"
   profiles:
-    active: dev
+    active: ${SPRING_PROFILES_ACTIVE:dev}
