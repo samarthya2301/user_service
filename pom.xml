@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.samarthya-dev</groupId>
 	<artifactId>user-service</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>user-service</name>
 	<description>User and Security Service for Expense Intelligence Platform</description>
 	<url/>
