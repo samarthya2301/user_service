@@ -1,5 +1,6 @@
 package com.samarthya_dev.user_service.repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -14,6 +15,15 @@ import jakarta.transaction.Transactional;
 
 @Repository
 public interface RefreshTokenRepository extends JpaRepository<RefreshTokenEntity, UUID> {
+
+	@Query("""
+		SELECT refreshToken FROM RefreshTokenEntity refreshToken
+		JOIN refreshToken.user user
+		WHERE user.email = :email
+		AND refreshToken.expiresTimestamp > CURRENT_TIMESTAMP
+		AND refreshToken.revoked = false
+	""")
+	List<RefreshTokenEntity> findAlreadyExistingRefreshTokensForUser(String email);
 
 	@Query("""
 		SELECT refreshToken FROM RefreshTokenEntity refreshToken
