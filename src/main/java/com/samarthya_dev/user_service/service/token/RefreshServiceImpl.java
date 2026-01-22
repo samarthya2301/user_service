@@ -3,7 +3,6 @@ package com.samarthya_dev.user_service.service.token;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Base64;
-
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
 
@@ -42,22 +41,35 @@ public class RefreshServiceImpl implements RefreshService {
 	 */
 	@Override
 	public String generateToken(UserEntity userEntity) {
+		return refreshTokenRepository
+			.findAlreadyExistingRefreshTokensForUser(userEntity.getEmail())
+			.stream()
+			.findFirst()
+			.map(existingRefreshToken -> {
 
-		RefreshTokenEntity refreshTokenEntity = RefreshTokenEntity
-			.builder()
-			.user(userEntity)
-			.token(random512BitBase64())
-			.createdTimestamp(Instant.now())
-			.expiresTimestamp(Instant.now().plus(serviceConfig.getToken().getRefresh().getExpireAfter()))
-			.revoked(Boolean.FALSE)
-			.build();
+				log.info("Returning already present Refresh Token Entity from Database");
+				return existingRefreshToken;
 
-		log.info("Saving Refresh Token Entity into Database");
-		refreshTokenRepository.save(refreshTokenEntity);
-		log.info("Refresh Token Entity saved successfully into Database");
+			})
+			.orElseGet(() -> {
 
-		return refreshTokenEntity.getToken();
+				RefreshTokenEntity newRefreshToken = RefreshTokenEntity
+					.builder()
+					.user(userEntity)
+					.token(random512BitBase64())
+					.createdTimestamp(Instant.now())
+					.expiresTimestamp(Instant.now().plus(serviceConfig.getToken().getRefresh().getExpireAfter()))
+					.revoked(Boolean.FALSE)
+					.build();
 
+				log.info("Saving Refresh Token Entity into Database");
+				refreshTokenRepository.save(newRefreshToken);
+				log.info("Refresh Token Entity saved successfully into Database");
+
+				return newRefreshToken;
+
+			})
+			.getToken();
 	}
 	
 }
