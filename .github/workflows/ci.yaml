@@ -3,12 +3,10 @@ name: CI
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
   workflow_dispatch:
 
 jobs:
-  build:
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,6 +20,19 @@ jobs:
 
       - name: Build with Maven
         run: mvn clean verify
+      
+      - name: Log In to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
-      - name: Build Docker image
-        run: docker build -t user-service-api .
+      - name: Build Docker Image
+        run: |
+          IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/user-service-api
+          TAG=${{ github.sha }}
+          docker build -t $IMAGE:$TAG -t $IMAGE:latest
+      
+      - name: Push Docker Image
+        run: |
+          IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/user-service-api
+          TAG=${{ github.sha }}
+          docker push $IMAGE:$TAG
+          docker push $IMAGE:latest
