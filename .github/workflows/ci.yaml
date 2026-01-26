@@ -28,7 +28,7 @@ jobs:
         run: |
           IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/user-service-api
           TAG=${{ github.sha }}
-          docker build -t $IMAGE:$TAG -t $IMAGE:latest
+          docker build -t $IMAGE:$TAG -t $IMAGE:latest .
       
       - name: Push Docker Image
         run: |
