@@ -1,7 +1,6 @@
-.git
-.gitignore
-Dockerfile
-docker-compose.yaml
-*.log
-.idea
-.vscode
+# 1. Ignore everything in the directory
+**
+
+# 2. Allowed files
+!target/user-service-*.jar
+!Dockerfile
