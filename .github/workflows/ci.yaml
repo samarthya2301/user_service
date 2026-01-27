@@ -44,7 +44,10 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: user-service-api
-          path: target/
+          path: .
+      
+      - name: Inspect Directory Structure
+        run: ls -R
       
       - name: Log In to Docker Hub
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
