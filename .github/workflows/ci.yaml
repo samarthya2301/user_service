@@ -49,6 +49,9 @@ jobs:
       
       - name: Inspect Directory Structure
         run: ls -R
+
+      - name: List target Directory
+        run: ls -al target
       
       - name: Log In to Docker Hub
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
