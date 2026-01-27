@@ -20,6 +20,7 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
+          cache: 'maven'
 
       - name: Build Artifact with Maven
         run: mvn clean verify
