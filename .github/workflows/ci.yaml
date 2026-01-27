@@ -45,6 +45,7 @@ jobs:
         with:
           name: user-service-api
           path: target/
+          merge-multiple: true
       
       - name: Inspect Directory Structure
         run: ls -R
