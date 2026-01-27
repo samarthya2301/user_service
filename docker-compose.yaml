@@ -1,8 +1,8 @@
 services:
   app:
-    build: .
-    image: user-service-api
-    # image: samarthya2301/user-service-api:latest
+    build: .  # Required for CI
+    image: user-service-api  # Required for CI
+    # image: samarthya2301/user-service-api:latest  # Required for Server Pull
     container_name: user-service-api
     ports:
       - "3001:8080"
