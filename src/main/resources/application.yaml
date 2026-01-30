@@ -39,7 +39,7 @@ secrets:
     key: ${SECRETS_JWT_KEY}
 
 server:
-  port: ${SERVER_PORT:3001}
+  port: ${SERVER_PORT:8080}
   servlet:
     context-path: /user
 
